@@ -31,7 +31,7 @@
  */
 
 /**
- * Call Codetrunk
+ * Calling Codetrunk
  */
 define("_CP", __DIR__);
 define("ROOT", dirname($_SERVER['PHP_SELF']));
