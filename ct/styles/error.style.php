@@ -26,7 +26,7 @@
  * @filesource error.style.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.0 Initial Release
+ * @version 2009 1.01 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -73,9 +73,9 @@ if(!defined("_CT")) exit;
    
       <div style="width: 500px; margin: 32px auto 0;">
          <div class="Box">
-            <img src="<?=ROOT?>/images/codetrunk.png" alt="Codetrunk" />
+            <img src="<?php echo ROOT?>/images/codetrunk.png" alt="Codetrunk" />
             <p style="font: bold 13px Arial; margin-top: 14px;">Hey! <i>Codetrunk</i> encountered an error and had to stop! The error has been logged and should be fixed soon.</p>
-            <p style="font: bold 13px Arial; margin-top: 14px;">In the meantime, you may return to the <a href="<?=ROOT?>">home page</a>. Hopefully this won't happen again there!</p>
+            <p style="font: bold 13px Arial; margin-top: 14px;">In the meantime, you may return to the <a href="<?php echo ROOT?>">home page</a>. Hopefully this won't happen again there!</p>
          </div>
 
       <div style="margin-top: 4px;">© 2009 Nir Azuelos. <a href="mailto:nirazuelos@gmail.com">Contact</a>.</div>

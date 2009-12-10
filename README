@@ -1,0 +1,47 @@
+   Codetrunk
+================
+
+Codetrunk.com is a platform for sharing code snippets with friends, co-workers, pepole on irc channels and, in fact, with everyone on the Internet.
+Codetrunk is my little project for making a better pastebin, with the abbility of commenting on trunks (or bins), revising and so on.
+The main idea was to implement a better syntax highlighter (SyntaxHighlighter) with a prettier (but heavier) interface, something which pastebin was lacking.
+Codetrunk is also an effort of mine to improve my php coding skills, therefore, the software behind Codetrunk implemnts the following:
+
+    * Model View Controller Design Pattern
+    * Singleton Design Pattern
+    * Database-less Design to improve performance & reliability - while maintaining efficiency.
+
+The latest version can always be found live at http://wwww.codetrunk.com.
+Additionally, the most updated version could be found at Google Code SVN's, here: http://code.google.com/p/codetrunk/source/browse/trunk
+
+Beaware that the latest version at the svn might not be suitable for production needs and might be unstable, therefore you should only use the version that is downloadable
+from Google Code website.
+
+- Download: http://code.google.com/p/codetrunk/downloads/list
+
+- Main Project Site: http://code.google.com/p/codetrunk/
+
+- SVN: http://code.google.com/p/codetrunk/source/browse/trunk
+ 
+======================================================================
+
+If you have any suggestions, comments or fixes:
+
+ * Please contact me with the information below.
+ * Post an issue in Google Code: http://code.google.com/p/codetrunk/issues/entry 
+ * Or do both! :)
+
+Thanks!
+
+Contact
+=======
+
+Nir Azuelos
+
+Email: nirazuelos@gmail.com (also MSN)
+
+
+Additional Documentation
+========================
+See INSTALL for Installation Instructions
+See CHANGES for Changes Log
+See LICENCE for License Terms

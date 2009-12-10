@@ -26,7 +26,7 @@
  * @filesource file.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.0 Initial Release
+ * @version 2009 1.01 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -100,7 +100,7 @@ class File
             while(!feof($mruOpen)) { $mruData .= fgets($mruOpen, 4096); }
             if(strlen($mruData)) { $newMru = unserialize($mruData); if(count($newMru) > 15) array_pop($newMru); } else $newMru = array();
             if(is_array($updateMru)) array_unshift($newMru, $updateMru);
-            else if(Codetrunk::getInstance()->Controllers['trunks']->getTrunkKey($updateMru))
+            else if(Codetrunk::getInstance()->getController("Trunks")->getTrunkKey($updateMru))
                foreach($newMru as $mruId => $mruValue) if($mruValue['Key'] == $updateMru) { unset($newMru[$mruId]); break; }
             ftruncate($mruOpen, 0);
             fwrite($mruOpen, serialize($newMru));
@@ -186,7 +186,7 @@ class File
     * File::getTrunk()
     * @param string $trunkKey Trunk Key
     * @param string $Domain Domain
-    * @return array
+    * @return array|bool
     */
    function getTrunk($trunkKey, $Domain) {
       $trunkFile = $this->getTrunkPath($trunkKey);
@@ -198,9 +198,9 @@ class File
             if(strlen($trunkData)) $newTrunk = unserialize($trunkData); else trigger_error("Invalid trunk at '{$trunkFile}' !!!", E_ERROR);
             fclose($trunkOpen);   
          } else trigger_error("Could not open trunk at '{$trunkFile}' !!!", E_ERROR);
-         $newTrunk['url'] = Codetrunk::getInstance()->Controllers['trunks']->getTrunkUrl($newTrunk['Key']);
+         $newTrunk['Url'] = Codetrunk::getInstance()->getController("Trunks")->getTrunkUrl($newTrunk['Key']);
          if($newTrunk['Domain'] != $Domain) return false;
-         elseif((time() > $newTrunk['expireTime']) && $newTrunk['expireTime'] != 0) return -1;
+         elseif((time() > $newTrunk['expireTime']) && $newTrunk['expireTime'] != 0) return false;
          else return $newTrunk;
       } else return false;
    }
@@ -233,7 +233,7 @@ class File
     * 
     * File::deleteTrunk()
     * @param string $trunkKey Trunk Key
-    * @param string $Domain Domain
+    * @param string @Domain Domain
     * @return bool
     */
    function deleteTrunk($trunkKey, $Domain) {
@@ -250,16 +250,18 @@ class File
     * 
     * File::addComment()
     * @param string $trunkKey Trunk Key
+    * @param string @Domain Domain
     * @param string $Comment Comment
     * @param string $Name Name
     */
-   function addComment($trunkKey, $Comment, $Name) {
+   function addComment($trunkKey, $Domain, $Comment, $Name) {
       $commentFile = $this->getTrunkPath($trunkKey).".c";
       $commentOpen = fopen($commentFile, "a+");
       if($commentOpen) {
          $updateComment['Content']    = $Comment;
          $updateComment['Name']       = $Name;
          $updateComment['Time']       = time();
+         $updateComment['Domain']     = $Domain;
          $updateComment['timeString'] = $this->getTimeString(time());
          if(flock($commentOpen, LOCK_EX)) {
             $commentData = false;
@@ -279,9 +281,10 @@ class File
     * 
     * File::getComments()
     * @param string $trunkKey Trunk Key
-    * @return array
+    * @param string @Domain Domain
+    * @return array|bool
     */
-   function getComments($trunkKey) {
+   function getComments($trunkKey, $Domain) {
       $commentsFile = $this->getTrunkPath($trunkKey).".c";
       if(file_exists($commentsFile)) {
          $commentOpen = fopen($commentsFile, "r");
@@ -291,7 +294,8 @@ class File
             if(strlen($commentsData)) $newComments = unserialize($commentsData); else trigger_error("Invalid trunk comments at '{$commentsFile}' !!!", E_ERROR);
             fclose($commentOpen);   
          } else trigger_error("Could not open trunk at '{$commentsFile}' !!!", E_ERROR);
-         return $newComments;
+         if($newComments['Domain'] != $Domain) return false;
+         else return $newComments;
       } else return false;
    }
 }

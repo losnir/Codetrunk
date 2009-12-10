@@ -26,7 +26,7 @@
  * @filesource codetrunk.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.0 Initial Release
+ * @version 2009 1.01 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -57,6 +57,17 @@ final class Codetrunk
       return self::$codetrunkInstance;
    }
    
+   var $Errors;
+   var $Controllers;
+   var $Views;
+   var $Router;
+   var $wRenderer;
+   var $File;
+   var $Syntax;
+   var $webUrl;
+   var $Domain;
+   var $Config;
+   
    /**
     * Performs basic initialization
     * 
@@ -72,8 +83,8 @@ final class Codetrunk
 
       /* Development Mode */
       if($this->Config['Codetrunk']['dev']) {
-         error_reporting(E_ALL | E_STRICT);
-         set_error_handler(array($this, "errorHandler"), E_ALL | E_STRICT);
+         error_reporting(E_ALL);
+         set_error_handler(array($this, "errorHandler"), E_ALL);
       } else {
          if(function_exists("ini_get")) $errorType = ini_get("error_reporting"); else $errorType = E_ALL & ~E_NOTICE;
          set_error_handler(array($this, "errorHandler"), $errorType);
@@ -88,35 +99,109 @@ final class Codetrunk
       include_once "websiterenderer.class.php";
       include_once "syntaxhighlighter.class.php";
       include_once "controllers/controller.class.php";
+      include_once "views/view.class.php";
       
       /* Initialize */
       $this->Errors        = array();
       $this->Controllers   = array();
+      $this->Views         = array();      
       $this->Router        = new Router();
-      $this->wRenderer     = new websiteRenderer($this->Config['Codetrunk']['style']);
+      $this->wRenderer     = new websiteRenderer($this->Config['Codetrunk']['style'], $this->Config['Codetrunk']['title']);
       $this->File          = new File(_CP.DS.$this->Config['Storage']['storageDir']);
       $this->Syntax        = new SyntaxHighlighter($this->Config['Codetrunk']['syntax']);
       $this->webUrl        = "http://".$_SERVER['HTTP_HOST'].ROOT;
-      $this->Domain        = "";
+      $this->Domain        = substr_replace($_SERVER['HTTP_HOST'], null, strrpos($_SERVER['HTTP_HOST'], '.'.$this->Config['Codetrunk']['host']), strlen('.'.$this->Config['Codetrunk']['host']));
+
+      /* Load subdomain configuration */
+      if(strlen($this->Domain)) {
+         define("SUBDOMAIN", $this->Domain);
+         $this->Config = $this->configMerge($this->Config, $this->loadConfig("subdomain", true));
+         $slicedArray = explode('.', $this->Domain);
+         for($i = 1; $i <= count($slicedArray)+1; $i++)
+            $this->Config = $this->configMerge($this->Config, $this->loadConfig(implode('.', array_slice($slicedArray, 0, $i))));
+      }
    }
    
    /**
-    * Loads a controller from "/controllers/XYZ.controller.php"
+    * Adds a controller from "/controllers/XYZ.controller.php"
     * 
-    * Codetrunk::loadController()
-    * @param string $controllerName The controller name to load. This is XYZ.
-    * @return bool|Controller Returns a controller instance, or true if it is already exists
+    * Codetrunk::addController()
+    * @param string $controllerAlias Controller alias name
+    * @param string $controllerName The controller natural name to add. This is XYZ.
+    * @return bool
     * @public
     */
-   public function loadController($controllerName) {
-      if(isset($this->Controllers[$controllerName])) return true;
-      if(include_once(strtolower("controllers/{$controllerName}.controller.php"))) {
-         $className = "{$controllerName}Controller";
+    function addController($controllerAlias, $controllerName = "") {
+      if(isset($this->Controllers[$controllerAlias])) return true;
+      if(strlen($controllerName)) {
+         $controllerPath = _CP.strtolower("/ct/controllers/{$controllerName}.controller.php");
+         if(file_exists($controllerPath)) {
+            $this->Controllers[$controllerAlias] = array(array($controllerPath, $controllerName));
+            return true;                  
+         } else trigger_error("Cannot find controller '{$controllerAlias}' !!!",  E_USER_WARNING);
+      } else trigger_error("Controller '{$controllerAlias}' is not added !!!",  E_USER_WARNING);
+      return false;   
+    }            
+         
+   /**
+    * Gets a controller with an alias
+    * 
+    * Codetrunk::getController()
+    * @param string $controllerAlias Controller alias name
+    * @return Controller|bool
+    * @public
+    */
+   public function getController($controllerAlias) {
+      if(!isset($this->Controllers[$controllerAlias])) return false;
+      if(isset($this->Controllers[$controllerAlias][1])) return $this->Controllers[$controllerAlias][1];
+      if(include_once($this->Controllers[$controllerAlias][0][0])) {
+         $className = $this->Controllers[$controllerAlias][0][1]."Controller";
          if(class_exists($className)) {
-            $this->Controllers[$controllerName] = new $className();
-            return $this->Controllers[$controllerName];
-         } else trigger_error("Controller '{$controllerName}' is invalid !!!",  E_USER_WARNING);
-      } else trigger_error("Cannot find controller '{$controllerName}' !!!",  E_USER_WARNING);
+            $this->Controllers[$controllerAlias][1] = new $className();
+            return $this->Controllers[$controllerAlias][1];
+         } else trigger_error("Controller ".$this->Controllers[$controllerAlias][0][1]." is invalid !!!",  E_USER_WARNING);
+      } else trigger_error("Cannot find controller ".$this->Controllers[$controllerAlias][0][1]." !!!",  E_USER_WARNING);
+   }
+   
+   /**
+    * Adds a view from "/views/XYZ.view.php"
+    * 
+    * Codetrunk::addView()
+    * @param string $viewAlias View alias name
+    * @param string $viewName The view natural name to add. This is XYZ.
+    * @return bool
+    * @public
+    */
+    function addView($viewAlias, $viewName = "") {
+      if(isset($this->Views[$viewAlias])) return true;
+      if(strlen($viewName)) {
+         $viewPath = _CP.strtolower("/ct/views/{$viewName}.view.php");
+         if(file_exists($viewPath)) {
+            $this->Views[$viewAlias] = array(array($viewPath, $viewName));
+            return true;                  
+         } else trigger_error("Cannot find view '{$viewAlias}' !!!",  E_USER_WARNING);
+      } else trigger_error("View '{$viewAlias}' is not added !!!",  E_USER_WARNING);
+      return false;   
+    }            
+         
+   /**
+    * Gets a view with an alias
+    * 
+    * Codetrunk::getView()
+    * @param string $viewAlias View alias name
+    * @return View|bool
+    * @public
+    */
+   public function getView($viewAlias) {
+      if(!isset($this->Views[$viewAlias])) return false;
+      if(isset($this->Views[$viewAlias][1])) return $this->Views[$viewAlias][1];
+      if(include_once($this->Views[$viewAlias][0][0])) {
+         $className = $this->Views[$viewAlias][0][1]."View";
+         if(class_exists($className)) {
+            $this->Views[$viewAlias][1] = new $className();
+            return $this->Views[$viewAlias][1];
+         } else trigger_error("View ".$this->Views[$viewAlias][0][1]." is invalid !!!",  E_USER_WARNING);
+      } else trigger_error("Cannot find view ".$this->Views[$viewAlias][0][1]." !!!",  E_USER_WARNING);
    }
    
    /**
@@ -129,10 +214,27 @@ final class Codetrunk
     * @public
     */
    public function loadConfig($configName, $Essential = false) {
-      $configPath = "config/{$configName}.conf.ini";
-      $iniConfig = parse_ini_file($configPath, true);
-      if($iniConfig === false && $Essential) trigger_error("Unable to load configuration! The configuration file located at <b>'".$configPath."'</b> does not exists or is invalid.",  E_USER_ERROR);
-      return $iniConfig;
+      $configPath = _CP."/ct/config/{$configName}.conf.ini";
+      if(file_exists($configPath))
+         if($iniConfig = @parse_ini_file($configPath, true)) return $iniConfig;
+      if(!isset($iniConfig) && $Essential)
+         trigger_error("Unable to load configuration! The configuration file located at <b>'".$configPath."'</b> does not exists or is invalid.",  E_USER_ERROR);
+      return array();
+   }
+   
+   /**
+    * Takes an array returned by parse_ini_file with sections, and merges it
+    * 
+    * @param $Source Source array to be merged and returned
+    * @param $Merge An array with extended information to merge
+    * @return array
+    * @public
+    * Codetrunk::configMerge()
+    */
+   public function configMerge($Source, $Merge) {
+      foreach($Merge AS $cSection => $cKey)
+         $Source[$cSection] = array_merge($Source[$cSection], $Merge[$cSection]);
+      return $Source;
    }
    
    /**
@@ -144,9 +246,10 @@ final class Codetrunk
     * @public
     */
    public function nl2br_pre($tString) {
-      return preg_replace_callback('!<pre(.*?)>(.*?)</pre>!is', function($m) {
+      return preg_replace_callback('!<pre(.*?)>(.*?)</pre>!is', "clean", nl2br($tString));
+      function clean() {
          return "<pre ".stripslashes(trim($m[1])).">".stripslashes(str_replace("<br />", null, $m[2]))."</pre>";
-      }, nl2br($tString));
+      }
    }
    
    /**

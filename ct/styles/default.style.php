@@ -26,7 +26,7 @@
  * @filesource default.style.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.0 Initial Release
+ * @version 2009 1.01 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -35,219 +35,22 @@ if(!defined("_CT")) exit;
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
    <head>
-      <title><?=Codetrunk::getInstance()->Config['Codetrunk']['title']?></title>
+      <title><?php echo Codetrunk::getInstance()->wRenderer->getTitle() ?></title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <meta http-equiv="X-UA-Compatible" content="IE=7" />
-      <link rel="shortcut icon" type="image/x-icon" href="<?=ROOT?>/favicon.ico" />
+      <link rel="shortcut icon" type="image/x-icon" href="<?php echo ROOT?>/favicon.ico" />
       
-      <style type="text/css">
-
-      * { margin: 0; padding: 0; }
-
-      body {
-         font: 12px Arial;
-         text-align: left;
-         background-color: #b9d4ff;
-         color: #4189b0;
-      }
-      
-      #wrapper {
-         width: 90%;
-         margin: 0 auto;
-      }
-      
-      #header {
-         font: bold 16px Tahoma;
-         color: #ffffff;
-         margin: 16px 0 8px 0;
-      }
-
-      #body {
-         text-align: center;
-         border: 1px solid #6f92c9;
-         padding: 12px;
-         background-color: #e8f4f3;
-         overflow: auto;
-      }
-      
-      #body #left-sidebar {
-         float: left;
-         padding-right: 6px;
-         width: 19%;
-      }
-
-      #body #left-sidebar .block .title {
-         background-color: #90a9c8;
-         padding: 2px;
-         font: bold 14px Arial;
-         color: #ffffff;
-      }
-      
-      #body #left-sidebar .block .content {
-         padding: 4px;
-         margin-top: 8px;
-         text-align: left;
-         color: #4170b0;
-      }
-      
-      #body #left-sidebar .block .content .list {
-         font-size: 14px;
-         list-style-type: none;
-         text-align: left;
-      }
-      
-      #body #left-sidebar .block .content .list li {
-         font: bold 12px Arial;
-         overflow: auto;
-      }
-      
-      #body #left-sidebar .block .content .list li:hover {
-         background: #e0eaf4;
-      }
-      
-      #body #left-sidebar .block .content .list li .timeAgo {
-         font: 12px Arial;
-         float: right;
-      }
-      
-      #body #content {
-         float: right;
-         width: 80%;
-         text-align: left;
-         color: #355d8e;
-         font: bold 13px Arial;
-      }
-      
-      #body #content .title {
-         background-color: #d5e9fc;
-         padding: 2px;
-         font: bold 14px Arial;
-         color: #5b89b8;
-         margin-bottom: 14px;
-         padding: 6px;
-         border: 1px solid #90a9c8; 
-      }
-      
-      #footer {
-         margin: 4px 0 8px 0;
-         text-align: center;
-         border: 1px solid #6f92c9;
-         padding: 4px;
-         background-color: #e8f4f3;
-         color: #547496;
-         font: bold 12px Arial;
-      }
-      
-      #footer a {
-         color: #547496;
-         text-decoration: underline;
-      }
-      
-      #footer a:hover, a:active {
-         color: #265381;
-      }
-      
-      a {
-         color: #4189b0;
-         text-decoration: none;
-      }
-
-      a:hover, a:active {
-         color: #193b64;
-         text-decoration: underline;
-      }
-      
-      a.link1 {
-         color: #145582;
-      }
-      
-      a.link2 {
-         color: #47586d;
-      }
-      
-      .right {
-         float: right;
-      }
-      
-      .left {
-         float: left;
-      }
-      
-      label {
-         margin-right: 5px;
-         font: bold 18px Arial;
-         color: #6288b6;
-      }
-      
-      select {
-         padding: 4px;
-         color: #4e679c;
-         font: bold 12px Arial;
-      }
-      
-      option {
-         color: #4e679c;
-         padding: 0 4px 0 4px;
-         font: bold 12px Arial;
-         text-decoration: none;
-      }
-      
-      optgroup {
-         color: #122751;
-      }
-      
-      .icon {
-         float: left;
-         margin-right: 3px;
-      }
-      
-      .hl {
-         background-color: #faf9db;
-      }
-      
-      .clearfix {
-         clear: both;
-         text-indent: -9999em;
-         height: 0;
-         width: 0;
-         font-size: 0;
-      }
-      
-      .nBtn {
-         background: #e2edff;
-         border: 1px solid #90a9c8;
-         margin: 0;
-         padding: 4px;
-         color: #42638c;
-         font: bold 12px Arial;
-      }
-      
-      .thumbnail {
-         margin: 5px 0px 10px 10px;
-         background: #fafafa;
-         border: 1px solid #e4e4e4;
-         padding: 8px;
-      }
-      
-      img { border: 0; }
-      
-      .pngfix { behavior: url('<?=ROOT?>/js/iepngfix.htc'); }
-
-      .nRound3 { border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; }
-      .nRound6 { border-radius: 6px; -moz-border-radius: 6px; -webkit-border-radius: 6px; }
-      
-      </style>
-
-      <script type="text/javascript" src="<?=ROOT?>/js/DD_roundies_0.0.2a-min.js"></script>
+      <link href="<?php echo ROOT?>/css/codetrunk.css" rel="stylesheet" type="text/css" />
+      <link href="<?php echo ROOT?>/syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />
+      <link href="<?php echo ROOT?>/syntaxhighlighter/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+      <script type="text/javascript" src="<?php echo ROOT?>/js/DD_roundies_0.0.2a-min.js"></script>
       <script type="text/javascript">
       //<![CDATA[
          DD_roundies.addRule(".round6", "6px", true);
          DD_roundies.addRule(".round3", "3px", true);
       //]]>
       </script>
-      <link href="<?=ROOT?>/syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />
-      <link href="<?=ROOT?>/syntaxhighlighter/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
-      <link href="<?=ROOT?>/css/lightbox.css" rel="stylesheet" type="text/css" media="screen" />
+      <?php $this->processScripts() ?>
       
    </head>
 
@@ -256,8 +59,8 @@ if(!defined("_CT")) exit;
       <div id="wrapper">
       
          <div id="header">
-            <a href="<?=ROOT?>"><img src="<?=ROOT?>/images/codetrunk.png" class="pngfix" width="275" height="49" alt="Codetrunk" /></a>
-            <span style="margin: 8px 0 0 8px;">Snippet sharing and debugging tool</span>
+            <a href="<?php echo ROOT?>/"><img src="<?php echo ROOT?>/images/codetrunk.png" class="pngfix" width="275" height="49" alt="Codetrunk" /></a>
+            <span style="margin: 8px 0 0 8px;">Snippet sharing and debugging tool<?php echo (strlen(Codetrunk::getInstance()->Domain) ? " - Private ".substr(Codetrunk::getInstance()->Domain, 0, 24) : null)?></span>
          </div>
          
          <div id="body" class="round6">
@@ -267,7 +70,7 @@ if(!defined("_CT")) exit;
                   <div class="content">
                      <ul class="list">
                         <?php
-                           foreach(Codetrunk::getInstance()->Controllers['trunks']->getRecentTrunks(10) AS $i => $recentTrunk) {
+                           foreach(Codetrunk::getInstance()->getController("Trunks")->getRecentTrunks(10) AS $i => $recentTrunk) {
                               if($i > 0) echo "                        ";
                               echo '<li'.($recentTrunk['Age']==0?' class="hl"':'').'><a class="left" href="'.$recentTrunk['Url'].'">'.$recentTrunk['Name'].'</a>'.
                                    '<span class="timeAgo">'.$recentTrunk['ageFmt'].' ago</span></li>'.PHP_EOL;
@@ -280,7 +83,7 @@ if(!defined("_CT")) exit;
                <div class="block" style="margin-top: 24px;">
                   <div class="title nRound3 round3" style="border: 1px solid #fff;">Digging in the Trunk</div>
                   <div class="content">
-                     <form action="<?=ROOT?>/digTrunk" method="post">
+                     <form action="<?php echo ROOT?>/digTrunk" method="post">
                         <input type="hidden" name="Conroller" value="digTrunk" />
                         <label for="ctTrunkKey" style="font-size: 13px;">Trunk Key</label>
                         <div style="margin-top: 8px;">
@@ -295,26 +98,27 @@ if(!defined("_CT")) exit;
                <div class="block" style="margin-top: 24px;">
                   <div class="title nRound3 round3" style="border: 1px solid #fff;">About</div>
                   <div class="content">
-                     <b>Codetrunk</b> allows you to share pieces of code with your friends, irc, or co-workers...<a href="<?=ROOT?>/about"><b>Click here for more</b></a>.
+                     <b>Codetrunk</b> allows you to share pieces of code with your friends, irc, or co-workers...<a href="<?php echo ROOT?>/about"><b>Click here for more</b></a>.
+                     <div style="margin-top: 8px;">
+                        <a href="http://tweetmeme.com/domain/codetrunk.com"><img src="http://api.tweetmeme.com/domaincount.gif?domain=codetrunk.com&amp;bgcolor=90a9c8" alt="TweetMeme Chicklet" /></a>
+                     </div>                     
                   </div>
                </div>
             </div>
             
             <div id="content">
-               <?php
-                  foreach($this->contentHooks AS $rendererCallback) {
-                     $hookResult = call_user_func_array($rendererCallback[0], $rendererCallback[1]);
-                     if($hookResult === false) break;
-                  }
-               ?>
+               <?php $this->processContentHooks() ?>
             </div>
          </div>
          
          <div id="footer" class="round6">
-            <span class="left"><a href="http://www.losnir.com/" title="Site by LosNir" target="_blank"><img src="<?=ROOT?>/images/losnir16px.gif" style="float: left; margin-right: 6px;" alt="LosNir" /></a>
-            © 2009 Codetrunk, by Nir Azuelos.</span>
-               <a href="<?=ROOT?>/about">About</a>
-               <a style="margin-left: 24px;" href="mailto:nirazuelos@gmail.com"><b>Contact</b></a>
+            <span class="left"><a href="http://www.losnir.com/" title="Site by LosNir" target="_blank"><img src="<?php echo ROOT?>/images/losnir16px.gif" style="float: left; margin-right: 6px;" alt="LosNir" /></a>
+               © 2009 Codetrunk, by Nir Azuelos.</span>
+            <span class="right">
+               <a style="margin-right: 24px;" href="<?php echo ROOT?>/about">About</a>
+               <a style="margin-right: 24px;" href="mailto:nirazuelos@gmail.com"><b>Contact</b></a>
+            </span>
+            <div class="clearfix">&nbsp;</div>
          </div>
       </div>
       

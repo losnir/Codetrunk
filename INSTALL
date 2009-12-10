@@ -1,0 +1,19 @@
+Minimum Requirements:
+=====================
+- PHP 5.2.0 or higher
+- Apache with mod_rewrite enabled
+- For private codetrunk you will need a Wildcard DNS Entry. For more information contact your hosting provider.
+
+Installation
+============
+
+1. Extract public_html to your document root folder.
+2. Go to /ct/config and open default.config.ini
+3. Read the insturctions in that file and edit your configuration.
+4. Create the required directores according to your configuration.
+   - Default is:
+    + ../ctData
+    + ../ctData/storage
+    (one directory above your document_root)
+    
+That's it, you are done! Enjoy!

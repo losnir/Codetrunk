@@ -1,0 +1,199 @@
+/**
+ * Codetrunk CSS File
+ * @author Nir Azuelos (a.k.a LosNir) <nirazuelos@gmail.com>
+ * @copyright 2009 All Rights Reserved;
+ * @address http://wwww.codetrunk.com/
+ */
+ 
+* { margin: 0; padding: 0; }
+
+body {
+   font: 12px Arial;
+   text-align: left;
+   background-color: #b9d4ff;
+   color: #4189b0;
+}
+
+#wrapper {
+   width: 90%;
+   margin: 0 auto;
+}
+
+#header {
+   font: bold 16px Tahoma;
+   color: #ffffff;
+   margin: 16px 0 8px 0;
+}
+
+#body {
+   text-align: center;
+   border: 1px solid #6f92c9;
+   padding: 12px;
+   background-color: #e8f4f3;
+   overflow: auto;
+}
+
+#body #left-sidebar {
+   float: left;
+   padding-right: 6px;
+   width: 19%;
+}
+
+#body #left-sidebar .block .title {
+   background-color: #90a9c8;
+   padding: 2px;
+   font: bold 14px Arial;
+   color: #ffffff;
+}
+
+#body #left-sidebar .block .content {
+   padding: 4px;
+   margin-top: 8px;
+   text-align: left;
+   color: #4170b0;
+}
+
+#body #left-sidebar .block .content .list {
+   font-size: 14px;
+   list-style-type: none;
+   text-align: left;
+}
+
+#body #left-sidebar .block .content .list li {
+   font: bold 12px Arial;
+   overflow: auto;
+}
+
+#body #left-sidebar .block .content .list li:hover {
+   background: #e0eaf4;
+}
+
+#body #left-sidebar .block .content .list li .timeAgo {
+   font: 12px Arial;
+   float: right;
+}
+
+#body #content {
+   float: right;
+   width: 80%;
+   text-align: left;
+   color: #355d8e;
+   font: bold 13px Arial;
+}
+
+#body #content .title {
+   background-color: #d5e9fc;
+   font: bold 14px Arial;
+   color: #5b89b8;
+   margin-bottom: 14px;
+   padding: 6px;
+   border: 1px solid #90a9c8; 
+}
+
+#footer {
+   margin: 4px 0 8px 0;
+   text-align: center;
+   border: 1px solid #6f92c9;
+   padding: 4px;
+   background-color: #e8f4f3;
+   color: #547496;
+   font: bold 12px Arial;
+}
+
+#footer a {
+   color: #547496;
+   text-decoration: underline;
+}
+
+#footer a:hover, a:active {
+   color: #265381;
+}
+
+a {
+   color: #4189b0;
+   text-decoration: none;
+}
+
+a:hover, a:active {
+   color: #193b64;
+   text-decoration: underline;
+}
+
+a.link1 {
+   color: #145582;
+}
+
+a.link2 {
+   color: #47586d;
+}
+
+.right {
+   float: right;
+}
+
+.left {
+   float: left;
+}
+
+label {
+   margin-right: 5px;
+   font: bold 18px Arial;
+   color: #6288b6;
+}
+
+select {
+   padding: 4px;
+   color: #4e679c;
+   font: bold 12px Arial;
+}
+
+option {
+   color: #4e679c;
+   padding: 0 4px 0 4px;
+   font: bold 12px Arial;
+   text-decoration: none;
+}
+
+optgroup {
+   color: #122751;
+}
+
+.icon {
+   float: left;
+   margin-right: 3px;
+}
+
+.hl {
+   background-color: #faf9db;
+}
+
+.clearfix {
+   clear: both;
+   text-indent: -9999em;
+   height: 0;
+   width: 0;
+   font-size: 0;
+}
+
+.nBtn {
+   background: #e2edff;
+   border: 1px solid #90a9c8;
+   margin: 0;
+   padding: 4px;
+   color: #42638c;
+   font: bold 12px Arial;
+}
+
+.thumbnail {
+   margin: 5px 0px 10px 10px;
+   background: #fafafa;
+   border: 1px solid #e4e4e4;
+   padding: 8px;
+}
+
+img { border: 0; }
+
+.pngfix { behavior: url('<?php echo ROOT?>/js/iepngfix.htc'); }
+
+.nRound3 { border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; }
+.nRound6 { border-radius: 6px; -moz-border-radius: 6px; -webkit-border-radius: 6px; }

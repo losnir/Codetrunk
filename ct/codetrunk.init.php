@@ -26,7 +26,7 @@
  * @filesource codetrunk.init.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.0 Initial Release
+ * @version 2009 1.01 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -35,25 +35,27 @@
  */
 require "ct/codetrunk.class.php";
 $Codetrunk = Codetrunk::getInstance();
+$Codetrunk->addController("Default", "default");
+$Codetrunk->addController("Trunks", "trunks");
+$Codetrunk->addController("About", "about");
+$Codetrunk->addController("Captcha", "captcha");
 
 /**
  * Router Configuration
  */
-$Codetrunk->Router->setDefaultRoute("default", "showDefault"); /* Set default */
-// Trunks
-$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})(.txt)?(?:\/*)", "trunks", "showTrunk"); /* Show trunk */
-$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})\/download(?:\/*)", "trunks", "downloadTrunk"); /* Download trunk */
-$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})\/delete(?:\/*)", "trunks", "deleteTrunk"); /* Delete trunk */
-$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})\/correction(?:\/*)", "trunks", "correctTrunk"); /* Correct trunk */
-$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})\/revisions(?:\/*)", "trunks", "showTrunkRevisions"); /* Revisions trunk */
-$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})\/abusive(?:\/*)", "trunks", "abusiveTrunk"); /* Abusive trunk */
-$Codetrunk->Router->addRule("(?:\/*)submitTrunk(?:\/*)", "trunks", "submitTrunk"); /* Submit trunk */
-$Codetrunk->Router->addRule("(?:\/*)submitComment(?:\/*)", "trunks", "submitComment"); /* Submit comment trunk */
-$Codetrunk->Router->addRule("(?:\/*)digTrunk(?:\/*)", "trunks", "digTrunk"); /* Dig trunk */
-$Codetrunk->Router->addRule("(?:\/*)getCaptcha(?:\/*)", "captcha", "showCaptcha"); /* Captcha */
-$Codetrunk->Router->addRule("(?:\/*)languages(?:\/*)", "trunks", "showLanguages"); /* Languages */
-// Pages
-$Codetrunk->Router->addRule("(?:\/*)about(?:\/*)", "about", "showAbout"); /* About page */
+$Codetrunk->Router->setDefaultRoute("Default", "showDefault"); /* Set default */
+$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})(.txt)?(?:\/*)", "Trunks", "showTrunk"); /* Show trunk */
+$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})\/download(?:\/*)", "Trunks", "downloadTrunk"); /* Download trunk */
+$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})\/delete(?:\/*)", "Trunks", "deleteTrunk"); /* Delete trunk */
+$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})\/correction(?:\/*)", "Trunks", "correctTrunk"); /* Correct trunk */
+$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})\/revisions(?:\/*)", "Trunks", "showTrunkRevisions"); /* Revisions trunk */
+$Codetrunk->Router->addRule("(?:.*)([dmf][\dABCDEFabcdef]{7,8})\/reportAbuse(?:\/*)", "Trunks", "reportAbuse"); /* Abusive trunk */
+$Codetrunk->Router->addRule("(?:\/*)submitTrunk(?:\/*)", "Trunks", "submitTrunk"); /* Submit trunk */
+$Codetrunk->Router->addRule("(?:\/*)submitComment(?:\/*)", "Trunks", "submitComment"); /* Submit comment trunk */
+$Codetrunk->Router->addRule("(?:\/*)digTrunk(?:\/*)", "Trunks", "digTrunk"); /* Dig trunk */
+$Codetrunk->Router->addRule("(?:\/*)getCaptcha(?:\/*)", "Captcha", "showCaptcha"); /* Captcha */
+$Codetrunk->Router->addRule("(?:\/*)languages(?:\/*)", "Trunks", "showLanguages"); /* Languages */
+$Codetrunk->Router->addRule("(?:\/*)about(?:\/*)", "About", "showAbout"); /* About page */
 
 /**
  * Render Page

@@ -26,7 +26,7 @@
  * @filesource router.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.0 Initial Release
+ * @version 2009 1.01 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -58,7 +58,7 @@ class Router
     * @return bool
     */
    function addRule($Url, $Controller, $Action, $Params = array()) {
-      if(!Codetrunk::getInstance()->loadController($Controller)) return false;
+      if(!Codetrunk::getInstance()->getController($Controller)) return false;
       $this->Routes[] = array($Url, $Controller, $Action, $Params);
       return true;
    }
@@ -73,7 +73,7 @@ class Router
     * @return bool
     */
    function setDefaultRoute($Controller, $Action, $Params = array()) {
-      if(!Codetrunk::getInstance()->loadController($Controller)) return false;
+      if(!Codetrunk::getInstance()->addController($Controller)) return false;
       $this->defaultRoute = array(null, $Controller, $Action, $Params);
       return true;
    }
@@ -93,7 +93,7 @@ class Router
          if(!preg_match("/^{$Route[0]}$/", $Url, $Matches)) continue; else { $Cap = $Route; break; };
       if(count($Cap) < 3) $Cap = $this->defaultRoute;
       array_shift($Matches);
-      return call_user_func_array(array(Codetrunk::getInstance()->Controllers[$Cap[1]], $Cap[2]), array_merge($Params, $Cap[3], $Matches));
+      return call_user_func_array(array(Codetrunk::getInstance()->getController($Cap[1]), $Cap[2]), array_merge($Params, $Cap[3], $Matches));
    }
 }
 ?>

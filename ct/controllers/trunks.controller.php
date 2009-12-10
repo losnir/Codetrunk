@@ -26,7 +26,7 @@
  * @filesource trunks.controller.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.0 Initial Release
+ * @version 2009 1.01 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -42,6 +42,15 @@ if(!defined("_CT")) exit;
 class trunksController extends Controller
 {
    /**
+    * Initializes Trunks View
+    * 
+    * trunksController::__construct()
+    */
+    function __construct() {
+      Codetrunk::getInstance()->addView("Trunks", "trunks");
+    }
+    
+   /**
     * Hnadles a submit trunk action through POST
     * 
     * trunksController::submitTrunk()
@@ -53,10 +62,21 @@ class trunksController extends Controller
          $ctTrunk  = (isset($_POST['ctTrunk']) ? $_POST['ctTrunk'] : false);
          $ctSyntax = (isset($_POST['ctSyntaxLanguage']) && $this->getSyntax($_POST['ctSyntaxLanguage']) ? $_POST['ctSyntaxLanguage'] : Codetrunk::getInstance()->Syntax->defLanguage);
          $ctExpiry = (isset($_POST['ctExpiry']) ? $this->getExpiry($_POST['ctExpiry']) : false);
-         $ctPKey   = (isset($_POST['ctPKey']) ? $this->getTrunkKey($_POST['ctPKey']) : 0);
-         if(!$ctTrunk) {
-            Codetrunk::getInstance()->Router->followRoute(null, false, array($ctName));
-            Codetrunk::getInstance()->wRenderer->appendContentHook(function(){Codetrunk::getInstance()->wRenderer->prettyError("Please enter some code.", "margin-top: 12px;"); return true;});
+         $ctPKey   = (isset($_POST['ctPKey']) ? $this->getTrunkKey($_POST['ctPKey']) : "");
+         if(strlen($ctPKey)) {
+            $ctParent = Codetrunk::getInstance()->File->getTrunk($ctPKey, Codetrunk::getInstance()->Domain);
+            if($ctParent === false) {
+               Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;");
+               Codetrunk::getInstance()->Router->followRoute(null, false, array($ctName, $ctTrunk)); return true;
+            }
+            $errorParams = array($ctName, $ctParent['Code'], array('Submit a correction to a trunk by <a href="'.$ctParent['Url'].'"><u>'.$ctParent['Name'].'</u></a>', $ctPKey, $ctParent['Syntax']));
+         } else $errorParams = array($ctName, $ctTrunk);
+         if(!strlen($ctTrunk)) {
+            Codetrunk::getInstance()->Router->followRoute(null, false, $errorParams);
+            Codetrunk::getInstance()->wRenderer->prettyError("Please enter some code.", "margin-top: 12px;");
+         } elseif($ctParent && $ctParent['Code'] == $ctTrunk) {
+            Codetrunk::getInstance()->Router->followRoute(null, false, array($ctName, $ctTrunk, $errorParams));
+            Codetrunk::getInstance()->wRenderer->prettyError("The two codes were identical.", "margin-top: 12px;");
          } else {
             $ctToken = 0;
             if(isset($_POST['ctRemember'])) {
@@ -87,11 +107,11 @@ class trunksController extends Controller
       $getTrunk = Codetrunk::getInstance()->File->getTrunk($trunkKey, Codetrunk::getInstance()->Domain);
       if(isset($_COOKIE['ctToken']) && $getTrunk['Token'] == $_COOKIE['ctToken'] && $getTrunk !== false) {
          Codetrunk::getInstance()->File->deleteTrunk($trunkKey, Codetrunk::getInstance()->Domain);
-         Codetrunk::getInstance()->wRenderer->appendContentHook(function(){Codetrunk::getInstance()->wRenderer->prettyConfirm("Your trunk has been successfully deleted!", "margin-bottom: 12px;"); return true;});
+         Codetrunk::getInstance()->wRenderer->prettyConfirm("Your trunk has been successfully deleted!", "margin-bottom: 12px;");
          Codetrunk::getInstance()->Router->followRoute(null, false);
       } else {
-         if($getTrunk !== false) Codetrunk::getInstance()->wRenderer->appendContentHook(function(){Codetrunk::getInstance()->wRenderer->prettyError("You don't have the permission to delete this trunk!", "margin-bottom: 12px;"); return true;});
-         Codetrunk::getInstance()->Router->followRoute(null, array(null, "trunks", "showTrunk", array($trunkKey)));
+         if($getTrunk !== false) Codetrunk::getInstance()->wRenderer->prettyError("You don't have the permission to delete this trunk!", "margin-bottom: 12px;");
+         Codetrunk::getInstance()->Router->followRoute(null, array(null, "Trunks", "showTrunk", array($trunkKey)));
       }
       return true;
    }
@@ -106,37 +126,94 @@ class trunksController extends Controller
    function showTrunkRevisions($trunkKey) {
       $trunkData = Codetrunk::getInstance()->File->getTrunk($this->getTrunkKey($trunkKey), Codetrunk::getInstance()->Domain);
       if($trunkData === false) {
-         Codetrunk::getInstance()->wRenderer->appendContentHook(function(){
-            Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;"); return true;
-         });
+         Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;");
          Codetrunk::getInstance()->Router->followRoute(null, false);
+      } else Codetrunk::getInstance()->wRenderer->appendContentHook(array(Codetrunk::getInstance()->getView("Trunks"), "renderTrunkRevisions"), array($trunkData));
+      return true;
+   }
+   
+   
+   /**
+    * Handles an abusive trunk report through GET
+    * 
+    * trunksController::abusiveTrunk()
+    * @param string $trunkKey Trunk Key
+    * @return bool
+    */
+   function abusiveTrunk($trunkKey) {
+      $trunkKey = $this->getTrunkKey($trunkKey);
+      $getTrunk = Codetrunk::getInstance()->File->getTrunk($trunkKey, Codetrunk::getInstance()->Domain);
+      if($getTrunk !== false) {
+         $logSprintf = sprintf("Abusive trunk: %s - %s", $trunkKey, $getTrunk['Domain']);
+         $logFile    = Codetrunk::getInstance()->Config['Logging']['abusivePath'];
+         if($abusiveLog = @fopen($logFile, 'a+')) {
+            if(strpos(file_get_contents($logFile), $logSprintf) === false) error_log("[".date("d/m/Y H:i:s")."] ".$logSprintf.PHP_EOL, 3, _CP.DS.$logFile);
+            fclose($abusiveLog);
+         }
+         Codetrunk::getInstance()->wRenderer->prettyConfirm("The trunk was sucessfully flagged as abusive!", "margin-bottom: 12px;");
+         Codetrunk::getInstance()->Router->followRoute(null, array(null, "Trunks", "showTrunk", array($trunkKey, false, false, false)));
       } else {
-         Codetrunk::getInstance()->wRenderer->appendContentHook(function($trunkData){
-            ?>
-               <div class="title nRound3 round3" style="overflow: hidden;"><img src="<?=ROOT?>/images/icons/script_lightning.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
-                  Showing <?=count($trunkData['followUps'])?> revisions for a trunk posted by <u><a href="<?=$trunkData['url']?>"><?=$trunkData['Name']?></a></u>
-               </div>
-            <?php
-               $i = 0;
-               foreach($trunkData['followUps'] AS $followUp) {
-                  $fData = Codetrunk::getInstance()->File->getTrunk($followUp['Key'], Codetrunk::getInstance()->Domain);
-                  if(!$fData) continue;
-                  ?>
-               <div class="nBtn nRound3 round3" style="border: 1px solid #90a9c8; margin-top: 6px;">
-                  <img src="<?=ROOT?>/images/icons/script_go.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
-                  Trunk posted on <?=$fData['timeString']?> by <u><?=$fData['Name']?></u> ... <a href="<?=$fData['url']?>">Click here to view</a>
-               </div>
-                  <?php
-                  $i++;
-               }
-            ?>
-               <div class="nBtn nRound3 round3" style="border: 1px solid #90a9c8; background: #bed4ef; margin-top: 16px;">
-                  <img src="<?=ROOT?>/images/icons/script_delete.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
-                  Excluding <u><?=count($trunkData['followUps'])-$i?></u> expired or deleted trunks.
-               </div>
-            <?php
-         }, array($trunkData));
+         Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;");
+         Codetrunk::getInstance()->Router->followRoute(null, array(null, "Trunks", "showTrunk", array($trunkKey)));
       }
+      return true;
+   }
+
+   /**
+    * Handles a report abuse through POST and GET
+    * 
+    * trunksController::reportAbuse()
+    * @param string @trunkKey Trunk Key    
+    * @return bool
+    */
+   function reportAbuse($trunkKey) {
+      if(isset($_POST['Conroller']) && $_POST['Conroller'] == "reportAbuse") {
+         session_start();
+         $ctAbuseReason = (isset($_POST['ctAbuseReason']) ? $_POST['ctAbuseReason'] : false);
+         $ctComment     = (isset($_POST['ctComment']) ? $_POST['ctComment'] : false);
+         $ctEmail       = (isset($_POST['ctEmail']) ? $_POST['ctEmail'] : false);
+         $ctCaptcha  = (isset($_POST['ctCaptcha']) ? $_POST['ctCaptcha'] : false);      
+         $sesCaptcha = (isset($_SESSION['CodetrunkCaptcha']) ? $_SESSION['CodetrunkCaptcha'] : false);
+         unset($_SESSION['CodetrunkCaptcha']);
+         if(strtolower($sesCaptcha) != strtolower($ctCaptcha)) {
+            unset($_POST['Conroller']);
+            Codetrunk::getInstance()->Router->followRoute(null, array(null, "Trunks", "reportAbuse", array($trunkKey)));
+            Codetrunk::getInstance()->wRenderer->prettyError("Wrong verification code entered. Please try again!", "margin-top: 12px;");
+         } else {
+            switch($ctAbuseReason) {
+               case "spam": $ctAbuseReasonS = "Spam / Advertising / Junk"; break;
+               case "copy": $ctAbuseReasonS = "Copyrighted Code"; break;
+               case "personal": $ctAbuseReasonS = "Sensitive Personal Information"; break;
+               case "inappropriate": $ctAbuseReasonS = "Inappropriate (Nudity, Violence, Racism)"; break;
+               case "other":
+               default:
+                  $ctAbuseReasonS = "Other";
+                  break;
+            }
+            $ctMailMessage = '<html><head><title>Codetrunk.com - Abuse Report</title></head><body>
+               <h2>Codetrunk.com - Abuse Report!</h2>
+               The following trunk was reported as abusive: <a href="URL">URL</a><br /><br /><br />
+               <b>Reason:</b><span style="margin-left: 16px;">REASON</span><br /><br />
+               <b>Additional Comments:</b><textarea style="margin-left: 16px;">COMMENTS</textarea><br /><br />
+               <b>Email:</b><span style="margin-left: 16px;">EMAIL</span><br />
+            </body></html>';
+            $ctMailMessageHeaders  = 'MIME-Version: 1.0'.PHP_EOL;
+            $ctMailMessageHeaders .= 'Content-type: text/html; charset=iso-8859-1'.PHP_EOL;
+            $ctMailMessageHeaders .= 'From: Codetrunk <nirazuelos@gmail.com>'.PHP_EOL;
+            Codetrunk::getInstance()->Router->followRoute(null, false);
+            if(mail("Nir Azuelos <nirazuelos@gmail.com>", "Codetrunk.com - Abuse Report", $ctMailMessage, $ctMailMessageHeaders))
+               Codetrunk::getInstance()->wRenderer->prettyConfirm("Thanks you for sending this abuse report! I will investigate this report as soon as possible! Your help is much appreciated.", "margin-top: 12px;");
+            else Codetrunk::getInstance()->wRenderer->prettyError("There was an error while sending this abuse report, sorry!! Please try at some other time ;)", "margin-top: 12px;");
+         }
+      } else {
+         $ctTrunkKey = $this->getTrunkKey($trunkKey);            
+         $ctTrunk = Codetrunk::getInstance()->File->getTrunk($ctTrunkKey, Codetrunk::getInstance()->Domain);
+         if($ctTrunk === false) {
+            Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;");
+            Codetrunk::getInstance()->Router->followRoute(null, false); return true;
+         }
+         Codetrunk::getInstance()->wRenderer->appendContentHook(array(Codetrunk::getInstance()->getView("Trunks"), "renderReportAbuse"), array($ctTrunk));
+      }         
       return true;
    }
    
@@ -157,47 +234,21 @@ class trunksController extends Controller
          unset($_SESSION['CodetrunkCaptcha']);
          if(!$ctKey) Codetrunk::getInstance()->Router->followRoute(null, false);
          elseif(strtolower($sesCaptcha) != strtolower($ctCaptcha)) {
-            Codetrunk::getInstance()->Router->followRoute(null, array(null, "trunks", "showTrunk", array($ctKey, false, $ctName, $ctComment)));
-            Codetrunk::getInstance()->wRenderer->appendContentHook(function(){Codetrunk::getInstance()->wRenderer->prettyError("Wrong verification code entered. Please try again!", "margin-top: 12px;"); return true;});
-         } elseif(!$ctComment) {
-            Codetrunk::getInstance()->Router->followRoute(null, array(null, "trunks", "showTrunk", array($ctKey, false, $ctName, $ctComment)));
-            Codetrunk::getInstance()->wRenderer->appendContentHook(function(){Codetrunk::getInstance()->wRenderer->prettyError("Please enter a comment.", "margin-top: 12px;"); return true;});
+            Codetrunk::getInstance()->Router->followRoute(null, array(null, "Trunks", "showTrunk", array($ctKey, false, $ctName, $ctComment)));
+            Codetrunk::getInstance()->wRenderer->prettyError("Wrong verification code entered. Please try again!", "margin-top: 12px;");
+         } elseif(!strlen($ctComment)) {
+            Codetrunk::getInstance()->Router->followRoute(null, array(null, "Trunks", "showTrunk", array($ctKey, false, $ctName, $ctComment)));
+            Codetrunk::getInstance()->wRenderer->prettyError("Please enter a comment.", "margin-top: 12px;");
          } elseif(strlen($ctComment) > 2048) {
-            Codetrunk::getInstance()->Router->followRoute(null, array(null, "trunks", "showTrunk", array($ctKey, false, $ctName, $ctComment)));
-            Codetrunk::getInstance()->wRenderer->appendContentHook(function(){Codetrunk::getInstance()->wRenderer->prettyError("Your comment exceeded 2048 characters, please write less!", "margin-top: 12px;"); return true;});
+            Codetrunk::getInstance()->Router->followRoute(null, array(null, "Trunks", "showTrunk", array($ctKey, false, $ctName, $ctComment)));
+            Codetrunk::getInstance()->wRenderer->prettyError("Your comment exceeded 2048 characters, please write less!", "margin-top: 12px;");
          } else {
             $ctName   = (strlen($ctName) ? $ctName : "Anonymous");
             Codetrunk::getInstance()->File->addComment($ctKey, $ctComment, $ctName);
             header("Location: ".$this->getTrunkUrl($ctKey));
          }
       } else Codetrunk::getInstance()->Router->followRoute(null, false);
-      Codetrunk::getInstance()->wRenderer->appendContentHook(function(){echo '<script type="text/javascript">window.location.hash="newComment";</script>'; return true;});
-      return true;
-   }
-   
-   /**
-    * Handles an abusive trunk report through GET
-    * 
-    * trunksController::abusiveTrunk()
-    * @param string $trunkKey Trunk Key
-    * @return bool
-    */
-   function abusiveTrunk($trunkKey) {
-      $trunkKey = $this->getTrunkKey($trunkKey);
-      $getTrunk = Codetrunk::getInstance()->File->getTrunk($trunkKey, Codetrunk::getInstance()->Domain);
-      if($getTrunk !== false) {
-         $logSprintf = sprintf("Abusive trunk: %s - %s", $trunkKey, $getTrunk['Domain']);
-         $logFile    = Codetrunk::getInstance()->Config['Logging']['abusivePath'];
-         if($abusiveLog = @fopen($logFile, 'a+')) {
-            if(strpos(file_get_contents($logFile), $logSprintf) === false) error_log("[".date("d/m/Y H:i:s")."] ".$logSprintf.PHP_EOL, 3, _CP.DS.$logFile);
-            fclose($abusiveLog);
-         }
-         Codetrunk::getInstance()->wRenderer->appendContentHook(function(){Codetrunk::getInstance()->wRenderer->prettyConfirm("The trunk was sucessfully flagged as abusive!", "margin-bottom: 12px;"); return true;});
-         Codetrunk::getInstance()->Router->followRoute(null, array(null, "trunks", "showTrunk", array($trunkKey, false, false, false)));
-      } else {
-         if($getTrunk !== false) Codetrunk::getInstance()->wRenderer->appendContentHook(function(){Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;"); return true;});
-         Codetrunk::getInstance()->Router->followRoute(null, array(null, "trunks", "showTrunk", array($trunkKey)));
-      }
+      echo '<script type="text/javascript">window.location.hash="newComment";</script>';
       return true;
    }
    
@@ -220,98 +271,12 @@ class trunksController extends Controller
             echo nl2br(htmlspecialchars($trunkData['Code']));
             return false;
          }
-         Codetrunk::getInstance()->wRenderer->setTitle(str_replace("CT_LANGUAGE", Codetrunk::getInstance()->Syntax->getLanguage($trunkData['Syntax']), Codetrunk::getInstance()->Config['Codetrunk']['tShow']));
-         Codetrunk::getInstance()->wRenderer->appendContentHook(function($trunkData, $pData, $ctName, $ctComment = false) {
-            ?>
-               <script type="text/javascript" src="<?=ROOT?>/syntaxhighlighter/src/shCore.js"></script>
-               <?php
-                  foreach(Codetrunk::getInstance()->Syntax->allowedLanguages AS $langValue) {?>
-               <script type="text/javascript" src="<?=ROOT?>/syntaxhighlighter/scripts/<?=$langValue[1]?>"></script>
-                  <?php
-                  }
-               ?>
-               <script type="text/javascript">
-                  SyntaxHighlighter.config.clipboardSwf = '<?=ROOT?>/syntaxhighlighter/scripts/clipboard.swf';
-                  SyntaxHighlighter.all();
-               </script>
-            
-               <div class="title nRound3 round3" style="overflow: hidden;"><img src="<?=ROOT?>/images/icons/script_code.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
-                  <span style="float: left;">Trunk posted on <?=$trunkData['timeString']?> by <u><?=$trunkData['Name']?></u>
-                     <? if($pData !== false) { ?><span style="font-size: 12px; color: #5f6f84;">(A revised version of a trunk posted by <a class="link2" href="<?=$pData['url']?>"><?=$pData['Name']?></a>)</span><? } ?></span>
-                  <span style="float: right;">Language: <i><?=Codetrunk::getInstance()->Syntax->getLanguage($trunkData['Syntax'])?></i></span>
-                  <div class="clearfix">&nbsp;</div>
-                  <div style="font-size: 12px; margin-top: 6px; color: #145582;">&rsaquo;
-                     <a class="link1" target="_blank" href="<?=$trunkData['url']?>.txt">view plain</a> |
-                     <a class="link1" onclick="return confirm('Are you sure you want to report this trunk as abusive?')" href="<?=$trunkData['url']?>/abusive">report abuse</a> |
-                     <a class="link1" href="#Comments">comments</a>
-                     <? if(isset($_COOKIE['ctToken']) && $trunkData['Token'] == $_COOKIE['ctToken']) { ?> | <a class="link1" onclick="return confirm('Are you sure you want to delete this trunk?\r\nThis action cannot be undone!')" href="<?=$trunkData['url']?>/delete">delete</a><? } ?> |
-                     <a class="link1" href="<?=$trunkData['url']?>/download">download</a> |
-                     <a class="link1" href="<?=$trunkData['url']?>/correction">submit a correction</a>
-                     <? if($trunkData['followUps']) { ?> | <a class="link1" href="<?=$trunkData['url']?>/revisions"><?=count($trunkData['followUps'])?> revisions</a><? } ?>
-                  </div>
-               </div>
-
-               <div class="nRound3 round3" style="border: 1px solid #90a9c8;  background: #ffffff;">
-                  <pre class="brush: <?=$trunkData['Syntax']?>"><?=htmlspecialchars($trunkData['Code']);?></pre>
-               </div>
-               
-               <div class="title nRound3 round3" style="overflow: hidden; margin-top: 8px; background: #bed4ef;"><a class="link2" href="<?=$trunkData['url']?>/correction"><img src="<?=ROOT?>/images/icons/script_lightning.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
-                  Click here to submit a correction
-               </a></div>
-               
-               <a name="Comments"></a>
-               <div class="title nRound3 round3" style="overflow: hidden; margin-top: 16px;"><img src="<?=ROOT?>/images/icons/comments.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
-                  What pepole have to say about this trunk...
-               </div>
-               
-               <?php
-                  $trunkComments = Codetrunk::getInstance()->File->getComments($trunkData['Key']);
-                  if($trunkComments !== false) foreach($trunkComments AS $Comment) {
-                     ?>
-               <div class="nRound3 round3" style="overflow: hidden; background: #c6dfed; color: #4b7b96; padding: 6px; border: 1px solid #6e93ca; font: bold 12px Arial; margin-top: 6px;"><img src="<?=ROOT?>/images/icons/comment.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
-                  <span style="float: left;"><u><?=$Comment['Name']?></u> Says:</span>
-                  <span style="float: right;"><?=$Comment['timeString']?></span>
-                  <div class="clearfix">&nbsp;</div>
-                  <div style="border-top: 1px solid #4b7b96; margin-top: 6px; padding: 8px 0 2px 0; color: #4d7890;">
-                     <?php
-                        echo Codetrunk::getInstance()->nl2br_pre(preg_replace(array_keys(Codetrunk::getInstance()->Syntax->bbCodeRegex), array_values(Codetrunk::getInstance()->Syntax->bbCodeRegex), htmlspecialchars($Comment['Content'])));
-                     ?>
-                 </div>
-               </div>
-                     <?php
-                  }
-               ?>
-               
-               <a name="newComment"></a>
-               <div style="margin-top: 12px;">
-                  <div style="border-bottom: 1px solid #90a9c8; color: #90a9c8; margin: 12px 0 6px 0; padding-bottom: 2px;">Write a comment...
-                  <span style="color: #365376; font-size: 11px;">Wrap code with <i>[php][/php]</i>, where <i>php</i> is your preferred language, to get it highlighted. <a target="_blank" class="link2" href="<?=ROOT?>/languages">(supported languages)</a></span></div>
-                  <form action="<?=ROOT?>/submitComment" method="post">
-                     <input type="hidden" name="Conroller" value="submitComment" />
-                     <input type="hidden" name="ctKey" value="<?=$trunkData['Key']?>" />
-                     <div class="nRound3 round3" style="padding: 1px; border: 1px solid #90a9c8; background: #ffffff; width: 50%;">
-                        <textarea name="ctComment" rows="5" cols="1" style="border: 0; width: 100%; background: #ffffff; color: #1e4b92; font: bold 12px Arial;"><?=$ctComment?></textarea>
-                     </div>
-                     <div style="margin-top: 12px;">
-                        <label for="ctName" style="font-size: 13px; margin: 4px 8px 0 0; width: 80px;" class="left">Your name:</label>
-                           <input type="text" name="ctName" value="<?=$ctName?>" id="ctName" class="nRound3 nBtn" style="background: #ffffff; margin: 0; padding: 4px; width: 162px; float: left;" />
-                           <input type="submit" value="Submit Comment" class="nRound3 nBtn" style="width: 112px; padding: 3px; margin-left: 6px; height: 25px; float: left;" />
-                           <div class="clearfix">&nbsp;</div>
-                     </div>
-                     <div style="margin-top: 12px;">
-                        <label for="ctCaptcha" style="font-size: 13px; margin: 4px 8px 0 0; width: 80px;" class="left">Verification:</label>
-                           <input type="text" name="ctCaptcha" maxlength="7" id="ctCaptcha" class="nRound3 nBtn" style="background: #ffffff; margin-right: 6px; padding: 4px; width: 52px; float: left;" />
-                           <img src="<?=ROOT?>/getCaptcha" alt="Refresh the page to see the captcha" title="Please enter this combination of words and numbers into the text box to the left" />
-                           <div class="clearfix">&nbsp;</div>
-                     </div>
-                  </form>
-               </div>
-            <?php
-         }, array($trunkData, $pData, $ctName, $ctComment));
+         if(!strlen(Codetrunk::getInstance()->Domain)) 
+         Codetrunk::getInstance()->wRenderer->setTitleTrunk(Codetrunk::getInstance()->Syntax->getLanguage($trunkData['Syntax'])); 
+         Codetrunk::getInstance()->getView("Trunks")->initializeSyntaxHighlighter();
+         Codetrunk::getInstance()->wRenderer->appendContentHook(array(Codetrunk::getInstance()->getView("Trunks"), "renderTrunk"), array($trunkData, $pData, $ctName, $ctComment));
       } else {
-         Codetrunk::getInstance()->wRenderer->appendContentHook(function(){
-            Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;"); return true;
-         });
+         Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;");
          Codetrunk::getInstance()->Router->followRoute(null, false);
       }
       return true;
@@ -324,23 +289,7 @@ class trunksController extends Controller
     * @return bool
     */
    function showLanguages() {
-      Codetrunk::getInstance()->wRenderer->appendContentHook(function(){
-      ?>
-         <div class="title nRound3 round3" style="overflow: hidden;"><img src="<?=ROOT?>/images/icons/script_code.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
-            Supported languages
-         </div>
-         <?php
-            foreach(Codetrunk::getInstance()->Syntax->allowedLanguages AS $langKey => $langValue) {
-               ?>
-                  <div class="nBtn nRound3 round3" style="border: 1px solid #90a9c8; margin-top: 6px;">
-                     <img src="<?=ROOT?>/images/icons/script.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
-                     <span style="width: 180px; float: left;"><?=$langValue[0]?></span><span style="color: #828282; margin-left: 50px;"><i>[<?=$langKey?>]......[/<?=$langKey?>]</i></span>
-                  </div>
-               <?php
-            }
-         ?>
-      <?php
-      });
+      Codetrunk::getInstance()->wRenderer->appendContentHook(array(Codetrunk::getInstance()->getView("Trunks"), "renderSupportedLanguages"));
       return true;
    }
    
@@ -389,12 +338,10 @@ class trunksController extends Controller
    function correctTrunk($trunkKey) {
       $trunkData = Codetrunk::getInstance()->File->getTrunk($this->getTrunkKey($trunkKey), Codetrunk::getInstance()->Domain);
       if($trunkData === false) {
-         Codetrunk::getInstance()->wRenderer->appendContentHook(function(){
-            Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;"); return true;
-         });
+         Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;");
          Codetrunk::getInstance()->Router->followRoute(null, false);
       } else {
-         Codetrunk::getInstance()->Router->followRoute(null, false, array(null, $trunkData['Code'], array('Submit a correction to a trunk by <a href="'.$this->getTrunkUrl($trunkKey).'"><u>'.$trunkData['Name'].'</u></a>', $trunkKey, $trunkData['Syntax'])));
+         Codetrunk::getInstance()->Router->followRoute(null, false, array(null, $trunkData['Code'], array('Submit a correction to a trunk by <a href="'.$trunkData['Url'].'"><u>'.$trunkData['Name'].'</u></a>', $trunkKey, $trunkData['Syntax'])));
       }
       return true;
    }
@@ -409,7 +356,7 @@ class trunksController extends Controller
       if(isset($_POST['Conroller']) && $_POST['Conroller'] == "digTrunk") {
          $ctTrunkKey   = (isset($_POST['ctTrunkKey']) ? $this->getTrunkKey($_POST['ctTrunkKey']) : false);
          if($ctTrunkKey) header("Location: ".$this->getTrunkUrl($ctTrunkKey));
-         else Codetrunk::getInstance()->wRenderer->appendContentHook(function(){Codetrunk::getInstance()->wRenderer->prettyError("Trunk key is invalid.", "margin-bottom: 12px;"); return true;});
+         else Codetrunk::getInstance()->wRenderer->prettyError("Trunk key is invalid.", "margin-bottom: 12px;");
       } Codetrunk::getInstance()->Router->followRoute(null, false);
       return true;
    }
