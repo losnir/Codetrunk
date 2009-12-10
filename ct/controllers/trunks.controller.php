@@ -26,7 +26,7 @@
  * @filesource trunks.controller.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.01 Alpha Release to Public
+ * @version 2009 1.02 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -131,33 +131,6 @@ class trunksController extends Controller
       } else Codetrunk::getInstance()->wRenderer->appendContentHook(array(Codetrunk::getInstance()->getView("Trunks"), "renderTrunkRevisions"), array($trunkData));
       return true;
    }
-   
-   
-   /**
-    * Handles an abusive trunk report through GET
-    * 
-    * trunksController::abusiveTrunk()
-    * @param string $trunkKey Trunk Key
-    * @return bool
-    */
-   function abusiveTrunk($trunkKey) {
-      $trunkKey = $this->getTrunkKey($trunkKey);
-      $getTrunk = Codetrunk::getInstance()->File->getTrunk($trunkKey, Codetrunk::getInstance()->Domain);
-      if($getTrunk !== false) {
-         $logSprintf = sprintf("Abusive trunk: %s - %s", $trunkKey, $getTrunk['Domain']);
-         $logFile    = Codetrunk::getInstance()->Config['Logging']['abusivePath'];
-         if($abusiveLog = @fopen($logFile, 'a+')) {
-            if(strpos(file_get_contents($logFile), $logSprintf) === false) error_log("[".date("d/m/Y H:i:s")."] ".$logSprintf.PHP_EOL, 3, _CP.DS.$logFile);
-            fclose($abusiveLog);
-         }
-         Codetrunk::getInstance()->wRenderer->prettyConfirm("The trunk was sucessfully flagged as abusive!", "margin-bottom: 12px;");
-         Codetrunk::getInstance()->Router->followRoute(null, array(null, "Trunks", "showTrunk", array($trunkKey, false, false, false)));
-      } else {
-         Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;");
-         Codetrunk::getInstance()->Router->followRoute(null, array(null, "Trunks", "showTrunk", array($trunkKey)));
-      }
-      return true;
-   }
 
    /**
     * Handles a report abuse through POST and GET
@@ -192,17 +165,17 @@ class trunksController extends Controller
             }
             $ctMailMessage = '<html><head><title>Codetrunk.com - Abuse Report</title></head><body>
                <h2>Codetrunk.com - Abuse Report!</h2>
-               The following trunk was reported as abusive: <a href="URL">URL</a><br /><br /><br />
-               <b>Reason:</b><span style="margin-left: 16px;">REASON</span><br /><br />
-               <b>Additional Comments:</b><textarea style="margin-left: 16px;">COMMENTS</textarea><br /><br />
-               <b>Email:</b><span style="margin-left: 16px;">EMAIL</span><br />
+               The following trunk was reported as abusive: <a href="'.$this->getTrunkUrl($trunkKey).'">'.$this->getTrunkUrl($trunkKey).'</a><br /><br /><br />
+               <b>Reason:</b><span style="margin-left: 16px;">'.$ctAbuseReasonS.'</span><br /><br />
+               <b>Additional Comments:</b><textarea cols="75" rows="10" style="margin-left: 16px;">'.htmlspecialchars($ctComment).'</textarea><br /><br />
+               <b>Email:</b><span style="margin-left: 16px;">'.htmlspecialchars($ctEmail).'</span><br />
             </body></html>';
             $ctMailMessageHeaders  = 'MIME-Version: 1.0'.PHP_EOL;
             $ctMailMessageHeaders .= 'Content-type: text/html; charset=iso-8859-1'.PHP_EOL;
             $ctMailMessageHeaders .= 'From: Codetrunk <nirazuelos@gmail.com>'.PHP_EOL;
             Codetrunk::getInstance()->Router->followRoute(null, false);
             if(mail("Nir Azuelos <nirazuelos@gmail.com>", "Codetrunk.com - Abuse Report", $ctMailMessage, $ctMailMessageHeaders))
-               Codetrunk::getInstance()->wRenderer->prettyConfirm("Thanks you for sending this abuse report! I will investigate this report as soon as possible! Your help is much appreciated.", "margin-top: 12px;");
+               Codetrunk::getInstance()->wRenderer->prettyConfirm("Thank you for sending this abuse report! I will investigate this report as soon as possible! Your help is much appreciated.", "margin-top: 12px;");
             else Codetrunk::getInstance()->wRenderer->prettyError("There was an error while sending this abuse report, sorry!! Please try at some other time ;)", "margin-top: 12px;");
          }
       } else {

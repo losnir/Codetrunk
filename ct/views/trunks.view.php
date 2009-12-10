@@ -26,7 +26,7 @@
  * @filesource trunks.view.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.01 Alpha Release to Public
+ * @version 2009 1.02 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -100,7 +100,7 @@ class trunksView extends View
        <div style="margin-top: 12px;">
          <label for="ctComment" style="font-size: 13px; margin: 4px 8px 0 0; width: 80px;" class="left">Additional Comments:</label>
             <div class="nRound3 round3" style="padding: 1px; border: 1px solid #90a9c8; background: #ffffff; width: 50%; float: left;">
-              <textarea name="ctComment" id="ctComment" rows="5" cols="1" style="border: 0; width: 100%; background: #ffffff; color: #1e4b92; font: bold 12px Arial;">sadsa</textarea>
+              <textarea name="ctComment" id="ctComment" rows="5" cols="1" style="border: 0; width: 100%; background: #ffffff; color: #1e4b92; font: bold 12px Arial;"></textarea>
             </div>                              
             <div class="clearfix">&nbsp;</div>              
        </div>
