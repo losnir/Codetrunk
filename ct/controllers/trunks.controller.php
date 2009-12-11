@@ -26,7 +26,7 @@
  * @filesource trunks.controller.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.03 Alpha Release to Public
+ * @version 2009 1.04 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -68,14 +68,14 @@ class trunksController extends Controller
             if($ctParent === false) {
                Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;");
                Codetrunk::getInstance()->Router->followRoute(null, false, array($ctName, $ctTrunk)); return true;
-            }
+            }                                                
             $errorParams = array($ctName, $ctParent['Code'], array('Submit a correction to a trunk by <a href="'.$ctParent['Url'].'"><u>'.$ctParent['Name'].'</u></a>', $ctPKey, $ctParent['Syntax']));
          } else $errorParams = array($ctName, $ctTrunk);
          if(!strlen($ctTrunk)) {
             Codetrunk::getInstance()->Router->followRoute(null, false, $errorParams);
             Codetrunk::getInstance()->wRenderer->prettyError("Please enter some code.", "margin-top: 12px;");
          } elseif(isset($ctParent) && $ctParent['Code'] == $ctTrunk) {
-            Codetrunk::getInstance()->Router->followRoute(null, false, array($ctName, $ctTrunk, $errorParams));
+            Codetrunk::getInstance()->Router->followRoute(null, false, $errorParams);
             Codetrunk::getInstance()->wRenderer->prettyError("The two codes were identical.", "margin-top: 12px;");
          } else {
             $ctToken = 0;

@@ -1,5 +1,13 @@
 ============================== Codetrunk Changes History ==============================
 
+* Version 1.04 Alpha (11/12/2009) svn r8
+============================================
+ - 5th commit to SVN.
+ - Alpha version.
+ - May be used by the public.
+ - Changes:
+   + Fixed a serious bug with submitCorrection
+
 * Version 1.03 Alpha (11/12/2009) svn r7
 ============================================
  - 4th commit to SVN.
@@ -19,7 +27,7 @@
  - Alpha version.
  - May be used by the public.
  - Changes:
-   + Fixed a bug with root directory dedtection
+   + Fixed a bug with root directory detection
    + Fixed a bug with subdomain detection
    + Removed some random junk that was added to reportAbuse -> Additional Comments
    + Fixed a spelling issue in reportAbuse.
