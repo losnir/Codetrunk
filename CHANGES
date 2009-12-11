@@ -1,8 +1,22 @@
 ============================== Codetrunk Changes History ==============================
 
+* Version 1.03 Alpha (11/12/2009) svn r7
+============================================
+ - 4th commit to SVN.
+ - Alpha version.
+ - May be used by the public.
+ - Changes:
+   + Changed default.config.ini initial variables
+   + Fixed a bug with submitTrunk
+   + Changed the slogan a little bit
+   + Fixed title handling in websiteRenderer
+   + Added title show in some pages
+   + Improved SEO
+
 * Version 1.02 Alpha (11/12/2009) svn r6
 ============================================
- - 3rd commit to SVN. - Alpha version.
+ - 3rd commit to SVN.
+ - Alpha version.
  - May be used by the public.
  - Changes:
    + Fixed a bug with root directory dedtection
@@ -14,7 +28,8 @@
 
 * Version 1.01 Alpha (10/12/2009) svn r4/5
 ============================================
- - 2nd commit to SVN. - Alpha version.
+ - 2nd commit to SVN.
+ - Alpha version.
  - May be used by the public.
  - Changes:
    + Fixed a bug in submitTrunk where a correction would be treated as a fresh trunk

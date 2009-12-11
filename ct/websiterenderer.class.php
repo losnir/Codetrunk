@@ -26,7 +26,7 @@
  * @filesource websiterenderer.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.02 Alpha Release to Public
+ * @version 2009 1.03 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
  
@@ -163,7 +163,7 @@ class websiteRenderer
     * @param string $pageName Page Name
     */
    function setTitlePage($pageName) {
-      $this->Title = str_replace("%page%", $pageName, $this->Title);
+      $this->Title = str_replace("%title%", $this->Title, str_replace("%page%", $pageName, Codetrunk::getInstance()->Config['Codetrunk']['tPage']));
    }
    
    /**
@@ -173,7 +173,7 @@ class websiteRenderer
     * @param string $langName Usually this will be the syntax language
     */
    function setTitleTrunk($langName) {
-      $this->Title = str_replace("%ct_syntax%", $langName, $this->Title);
+      $this->Title = str_replace("%title%", $this->Title, str_replace("%ct_syntax%", $langName, Codetrunk::getInstance()->Config['Codetrunk']['tTrunk']));
    }
    
    /**

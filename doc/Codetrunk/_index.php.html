@@ -110,7 +110,7 @@ This file is part of Codetrunk (c).<br /><br /><p>$ Filename: index.php  $ Chang
     <td><b>author:</b>&nbsp;&nbsp;</td><td>Nir Azuelos &lt;<a href="mailto:nirazuelos@gmail.com">nirazuelos@gmail.com</a>&gt;</td>
   </tr>
   <tr>
-    <td><b>version:</b>&nbsp;&nbsp;</td><td>2009 1.01 Alpha Release to Public</td>
+    <td><b>version:</b>&nbsp;&nbsp;</td><td>2009 1.03 Alpha Release to Public</td>
   </tr>
   <tr>
     <td><b>copyright:</b>&nbsp;&nbsp;</td><td>Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;</td>
@@ -136,7 +136,7 @@ require(<a href="../Codetrunk/_ct---codetrunk.init.php.html">"ct/codetrunk.init.
 	<div class="tags">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
-		<code>ROOT = dirname($_SERVER['PHP_SELF'])</code>
+		<code>ROOT = strlen(dirname($_SERVER['PHP_SELF']))&gt;1?dirname($_SERVER['PHP_SELF']):''</code>
     </td></tr></table>
     </td></tr></table>
 
@@ -160,7 +160,7 @@ require(<a href="../Codetrunk/_ct---codetrunk.init.php.html">"ct/codetrunk.init.
 
         <div class="credit">
 		    <hr />
-		    Documentation generated on Thu, 10 Dec 2009 23:04:21 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
+		    Documentation generated on Fri, 11 Dec 2009 19:02:12 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.1</a>
 	      </div>
       </td></tr></table>
     </td>

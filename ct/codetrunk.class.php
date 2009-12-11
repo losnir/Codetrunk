@@ -26,7 +26,7 @@
  * @filesource codetrunk.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.02 Alpha Release to Public
+ * @version 2009 1.03 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -113,7 +113,7 @@ final class Codetrunk
       $this->Domain        = substr_replace($_SERVER['HTTP_HOST'], null, strrpos($_SERVER['HTTP_HOST'], '.'.$this->Config['Codetrunk']['host']), strlen('.'.$this->Config['Codetrunk']['host']));
       if($this->Domain == "www")
          $this->Domain = "";
-
+      
       /* Load subdomain configuration */
       if(strlen($this->Domain)) {
          define("SUBDOMAIN", $this->Domain);
@@ -121,6 +121,7 @@ final class Codetrunk
          $slicedArray = explode('.', $this->Domain);
          for($i = 1; $i <= count($slicedArray)+1; $i++)
             $this->Config = $this->configMerge($this->Config, $this->loadConfig(implode('.', array_slice($slicedArray, 0, $i))));
+         $this->wRenderer->setTitleRaw(str_replace("%title%", $this->wRenderer->getTitle(), $this->Config['Codetrunk']['title']));
       }
    }
    

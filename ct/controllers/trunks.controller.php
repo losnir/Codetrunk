@@ -26,7 +26,7 @@
  * @filesource trunks.controller.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.02 Alpha Release to Public
+ * @version 2009 1.03 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -74,7 +74,7 @@ class trunksController extends Controller
          if(!strlen($ctTrunk)) {
             Codetrunk::getInstance()->Router->followRoute(null, false, $errorParams);
             Codetrunk::getInstance()->wRenderer->prettyError("Please enter some code.", "margin-top: 12px;");
-         } elseif($ctParent && $ctParent['Code'] == $ctTrunk) {
+         } elseif(isset($ctParent) && $ctParent['Code'] == $ctTrunk) {
             Codetrunk::getInstance()->Router->followRoute(null, false, array($ctName, $ctTrunk, $errorParams));
             Codetrunk::getInstance()->wRenderer->prettyError("The two codes were identical.", "margin-top: 12px;");
          } else {
@@ -185,6 +185,7 @@ class trunksController extends Controller
             Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;");
             Codetrunk::getInstance()->Router->followRoute(null, false); return true;
          }
+         Codetrunk::getInstance()->wRenderer->setTitlePage("Report Abuse");
          Codetrunk::getInstance()->wRenderer->appendContentHook(array(Codetrunk::getInstance()->getView("Trunks"), "renderReportAbuse"), array($ctTrunk));
       }         
       return true;
@@ -245,7 +246,7 @@ class trunksController extends Controller
             return false;
          }
          if(!strlen(Codetrunk::getInstance()->Domain)) 
-         Codetrunk::getInstance()->wRenderer->setTitleTrunk(Codetrunk::getInstance()->Syntax->getLanguage($trunkData['Syntax'])); 
+            Codetrunk::getInstance()->wRenderer->setTitleTrunk(Codetrunk::getInstance()->Syntax->getLanguage($trunkData['Syntax'])); 
          Codetrunk::getInstance()->getView("Trunks")->initializeSyntaxHighlighter();
          Codetrunk::getInstance()->wRenderer->appendContentHook(array(Codetrunk::getInstance()->getView("Trunks"), "renderTrunk"), array($trunkData, $pData, $ctName, $ctComment));
       } else {

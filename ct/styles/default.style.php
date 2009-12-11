@@ -26,7 +26,7 @@
  * @filesource default.style.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.02 Alpha Release to Public
+ * @version 2009 1.03 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -38,6 +38,8 @@ if(!defined("_CT")) exit;
       <title><?php echo Codetrunk::getInstance()->wRenderer->getTitle() ?></title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <meta http-equiv="X-UA-Compatible" content="IE=7" />
+      <meta name="description" content="Snippet Sharing &amp; Debugging Collaborative Tool. Share pieces of code (also called snippet) with your friends, irc, or co-workers." />
+      <meta name="keywords" content="Codetrunk, Snippet, Sharing, Debugging, Collaborative, Tool, Code, Coding, Snippets, Syntax, Highlighter" /> 
       <link rel="shortcut icon" type="image/x-icon" href="<?php echo ROOT?>/favicon.ico" />
       
       <link href="<?php echo ROOT?>/css/codetrunk.css" rel="stylesheet" type="text/css" />
@@ -60,7 +62,7 @@ if(!defined("_CT")) exit;
       
          <div id="header">
             <a href="<?php echo ROOT?>/"><img src="<?php echo ROOT?>/images/codetrunk.png" class="pngfix" width="275" height="49" alt="Codetrunk" /></a>
-            <span style="margin: 8px 0 0 8px;">Snippet sharing and debugging tool<?php echo (strlen(Codetrunk::getInstance()->Domain) ? " - Private ".substr(Codetrunk::getInstance()->Domain, 0, 24) : null)?></span>
+            <span style="margin: 8px 0 0 8px;">Snippet Sharing &amp; Debugging Collaborative Tool<?php echo (strlen(Codetrunk::getInstance()->Domain) ? " - Private ".substr(Codetrunk::getInstance()->Domain, 0, 24) : null)?></span>
          </div>
          
          <div id="body" class="round6">
@@ -98,7 +100,7 @@ if(!defined("_CT")) exit;
                <div class="block" style="margin-top: 24px;">
                   <div class="title nRound3 round3" style="border: 1px solid #fff;">About</div>
                   <div class="content">
-                     <b>Codetrunk</b> allows you to share pieces of code with your friends, irc, or co-workers...<a href="<?php echo ROOT?>/about"><b>Click here for more</b></a>.
+                     <b>Codetrunk</b> allows you to share pieces of code (also called snippet) with your friends, irc, or co-workers...<a href="<?php echo ROOT?>/about"><b>Click here for more</b></a>.
                      <div style="margin-top: 8px;">
                         <a href="http://tweetmeme.com/domain/codetrunk.com"><img src="http://api.tweetmeme.com/domaincount.gif?domain=codetrunk.com&amp;bgcolor=90a9c8" alt="TweetMeme Chicklet" /></a>
                      </div>                     
