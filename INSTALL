@@ -16,4 +16,12 @@ Installation
     + ../ctData/storage
     (one directory above your document_root)
     
+5. To be able to expire trunks, use the following cron on linux:
+
+   - Monthly Cron:
+      *  find /ctData/storage/f -atime +365 -exec rm \{\} \;
+   - Daily Cron:
+      *  find /ctData/storage/d -mtime +1 -exec rm \{\} \;
+      *  find /ctData/storage/m -mtime +31 -exec rm \{\} \;
+
 That's it, you are done! Enjoy!

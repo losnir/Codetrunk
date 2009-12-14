@@ -26,7 +26,7 @@
  * @filesource default.view.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.04 Alpha Release to Public
+ * @version 2009 1.05 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -65,7 +65,8 @@ class defaultView extends View
                         <select id="ctSyntaxLanguage" name="ctSyntaxLanguage" style="padding: 0; margin: 0; border: 0;">
                            <optgroup label="Popular">
                            <?php
-                              $defLanguage = ($pData[2] !== false ? $pData[2] : Codetrunk::getInstance()->Syntax->defLanguage);
+                              $defLanguage = strtolower($pData[2] !== false ? $pData[2] : Codetrunk::getInstance()->Domain);
+                              if(!array_key_exists($defLanguage, Codetrunk::getInstance()->Syntax->allowedLanguages)) $defLanguage = Codetrunk::getInstance()->Syntax->defLanguage;
                               foreach(Codetrunk::getInstance()->Syntax->popularLanguages AS $i => $langKey) {
                                  if($i > 0 ) echo "                              ";
                                  $langSelected = null;
@@ -76,12 +77,10 @@ class defaultView extends View
                            </optgroup>
                            <optgroup label="All">
                            <?php
-                              $i = 0;
-                              foreach(Codetrunk::getInstance()->Syntax->allowedLanguages AS $langKey => $langArray) {
-                                 if($i > 0 ) echo "                              ";
+                              foreach(array_diff_key(Codetrunk::getInstance()->Syntax->allowedLanguages, array_flip(Codetrunk::getInstance()->Syntax->popularLanguages)) AS $langKey => $langArray) {
                                  $langSelected = null;
                                  if($langSelected === null && $defLanguage == $langKey) $langSelected = ' selected="selected"';
-                                 echo "<option value=\"{$langKey}\"{$langSelected}>{$langArray[0]}</option>".PHP_EOL; $i++;
+                                 echo "<option value=\"{$langKey}\"{$langSelected}>{$langArray[0]}</option>".PHP_EOL;
                               }
                            ?>
                            </optgroup>

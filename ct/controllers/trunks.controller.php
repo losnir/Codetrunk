@@ -26,7 +26,7 @@
  * @filesource trunks.controller.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.04 Alpha Release to Public
+ * @version 2009 1.05 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -407,15 +407,6 @@ class trunksController extends Controller
          $recentTrunks[$trunkId]['Name']   = $this->getName($trunkValue['Name']);
       }
       return $recentTrunks;      
-   }
-   
-   /**
-    * Has a 5% probability of cleaning old posts from the disk
-    * 
-    * trunksController::doGarbageCollection()
-    */
-   function doGarbageCollection() {
-      if(rand()%100 < 1) $db->gc();
    }
    
    /**

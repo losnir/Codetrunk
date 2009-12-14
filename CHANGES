@@ -1,5 +1,16 @@
 ============================== Codetrunk Changes History ==============================
 
+* Version 1.05 Alpha (14/12/2009) svn r9
+============================================
+ - 6th commit to SVN.
+ - Alpha version.
+ - May be used by the public.
+ - Changes:
+   + Added support for automatic syntax highlighter language selection
+   + Changed syntaxHighlighter structure
+   + Fixed some more title issues
+   + Updated INSTALL
+
 * Version 1.04 Alpha (11/12/2009) svn r8
 ============================================
  - 5th commit to SVN.
