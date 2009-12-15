@@ -26,7 +26,7 @@
  * @filesource trunks.view.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.05 Alpha Release to Public
+ * @version 2009 1.06 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -153,19 +153,6 @@ class trunksView extends View
      <div class="title nRound3 round3 left" style="margin-bottom: 4px; padding: 4px;"><a class="link" href="<?php echo $trunkData['Url']?>/correction"><img src="<?php echo ROOT?>/images/icons/script_lightning.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
        Click here to submit a correction
      </a></div>
-     <div class="right" style="padding: 6px;">
-       <span class="left">
-         <a class="addthis_button" href="http://www.addthis.com/bookmark.php?v=250&amp;pub=LosNir"><img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a>
-       </span>
-       <span class="left" style="margin-left: 14px;">
-         <script type="text/javascript">tweetmeme_style = 'compact';</script>
-         <script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
-       </span>
-       <span class="left">
-         <a name="fb_share" type="button_count" href="http://www.facebook.com/sharer.php">Share</a>
-         <script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script>
-       </span>              
-     </div>
      <div class="clearfix">&nbsp;</div>
             
      <div class="nRound3 round3" style="border: 1px solid #90a9c8;  background: #ffffff;">
@@ -177,7 +164,8 @@ class trunksView extends View
        What pepole have to say about this trunk...
      </div>
      <?php
-     $trunkComments = Codetrunk::getInstance()->File->getComments($trunkData['Key'], Codetrunk::getInstance()->Domain);
+     $trunkComments = Codetrunk::getInstance()->File->getComments($trunkData['Key']);
+     $allUsedLanguages = array();     
      if($trunkComments !== false) foreach($trunkComments AS $Comment) {
      ?>
      <div class="nRound3 round3" style="overflow: hidden; background: #c6dfed; color: #4b7b96; padding: 6px; border: 1px solid #6e93ca; font: bold 12px Arial; margin-top: 6px;"><img src="<?php echo ROOT?>/images/icons/comment.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
@@ -186,12 +174,22 @@ class trunksView extends View
        <div class="clearfix">&nbsp;</div>
        <div style="border-top: 1px solid #4b7b96; margin-top: 6px; padding: 8px 0 2px 0; color: #4d7890;">
          <?php
+         $allowedLanguagesKeysByIndex = array_keys(Codetrunk::getInstance()->Syntax->allowedLanguages);                                    
+         $matchdLanguages = array();
+         foreach(array_keys(Codetrunk::getInstance()->Syntax->bbCodeRegex) AS $bbCode)
+            preg_match($bbCode, $Comment['Content'], $matchdLanguages[]);
+         foreach($matchdLanguages AS $i => $matchedLang)
+            if(count($matchedLang) && !in_array($allowedLanguagesKeysByIndex[$i], $allUsedLanguages)) $allUsedLanguages[] = $allowedLanguagesKeysByIndex[$i];                           
          echo Codetrunk::getInstance()->nl2br_pre(preg_replace(array_keys(Codetrunk::getInstance()->Syntax->bbCodeRegex), array_values(Codetrunk::getInstance()->Syntax->bbCodeRegex), htmlspecialchars($Comment['Content'])));
          ?>
        </div>
      </div>
      <?php
      }
+     if(!in_array($trunkData['Syntax'], $allUsedLanguages))
+        Codetrunk::getInstance()->wRenderer->appendScript('<script type="text/javascript" src="'.ROOT.'/syntaxhighlighter/scripts/'.Codetrunk::getInstance()->Syntax->getBrushFile($trunkData['Syntax']).'"></script>'.PHP_EOL);
+     foreach($allUsedLanguages AS $langValue)
+        Codetrunk::getInstance()->wRenderer->appendScript('<script type="text/javascript" src="'.ROOT.'/syntaxhighlighter/scripts/'.Codetrunk::getInstance()->Syntax->getBrushFile($langValue).'"></script>'.PHP_EOL);
      ?>
      <a name="newComment"></a>
      <div style="margin-top: 12px;">
@@ -219,27 +217,6 @@ class trunksView extends View
        </form>
      </div>
      <?php
-   }
-   
-   /**
-   * Initializes SyntaxHighlighter by calling the required <script> tags
-   * 
-   * trunksController::initializeSyntaxHighlighter()
-   */
-   function initializeSyntaxHighlighter() {
-     Codetrunk::getInstance()->wRenderer->appendScript('<script type="text/javascript" src="'.ROOT.'/syntaxhighlighter/src/shCore.js"></script>');
-       foreach(Codetrunk::getInstance()->Syntax->allowedLanguages AS $langValue)
-     Codetrunk::getInstance()->wRenderer->appendScript('<script type="text/javascript" src="'.ROOT.'/syntaxhighlighter/scripts/'.$langValue[1].'"></script>'.PHP_EOL);
-     Codetrunk::getInstance()->wRenderer->appendScript('<script type="text/javascript">
-       SyntaxHighlighter.config.clipboardSwf = \''.ROOT.'/syntaxhighlighter/scripts/clipboard.swf\';
-       SyntaxHighlighter.all();
-       </script>');
-     Codetrunk::getInstance()->wRenderer->appendScript('<script type="text/javascript">
-       var addthis_config = {
-         data_ga_tracker: "pageTracker"
-       };
-       </script>
-       <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pub=LosNir"></script>');
    }
    
    /**

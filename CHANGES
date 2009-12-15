@@ -1,5 +1,19 @@
 ============================== Codetrunk Changes History ==============================
 
+* Version 1.06 Alpha (15/12/2009) svn r10
+============================================
+ - 7th commit to SVN.
+ - Alpha version.
+ - May be used by the public.
+ - Changes:
+   + Fixed a SERIOUS bug with comments.
+   + Added 'nofollow' to some of the links in about
+   + Fixed some more title issues
+   + Fixed scripting and SyntaxHighlighter loading. Should be much faster now.
+   + Removed all sharing widgets due to slowdown.
+   + Added left-sidebar category named 'Subdomains' to explain the domain system
+   + Added Robots META Tag with 'noarchive' value to all pages.
+
 * Version 1.05 Alpha (14/12/2009) svn r9
 ============================================
  - 6th commit to SVN.

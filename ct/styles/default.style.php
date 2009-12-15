@@ -26,7 +26,7 @@
  * @filesource default.style.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.05 Alpha Release to Public
+ * @version 2009 1.06 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -40,11 +40,13 @@ if(!defined("_CT")) exit;
       <meta http-equiv="X-UA-Compatible" content="IE=7" />
       <meta name="description" content="Snippet Sharing &amp; Debugging Collaborative Tool. Share pieces of code (also called snippet) with your friends, irc, or co-workers." />
       <meta name="keywords" content="Codetrunk, Snippet, Sharing, Debugging, Collaborative, Tool, Code, Coding, Snippets, Syntax, Highlighter" /> 
+      <meta name="robots" content="noarchive" />
       <link rel="shortcut icon" type="image/x-icon" href="<?php echo ROOT?>/favicon.ico" />
       
       <link href="<?php echo ROOT?>/css/codetrunk.css" rel="stylesheet" type="text/css" />
       <link href="<?php echo ROOT?>/syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />
       <link href="<?php echo ROOT?>/syntaxhighlighter/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+      
       <script type="text/javascript" src="<?php echo ROOT?>/js/DD_roundies_0.0.2a-min.js"></script>
       <script type="text/javascript">
       //<![CDATA[
@@ -52,12 +54,21 @@ if(!defined("_CT")) exit;
          DD_roundies.addRule(".round3", "3px", true);
       //]]>
       </script>
-      <?php $this->processScripts() ?>
-      
+      <script type="text/javascript">
+         var _gaq = _gaq || [];
+         _gaq.push(['_setAccount', 'UA-1190348-3']);
+         _gaq.push(['_setDomainName', '.codetrunk.com']);
+         _gaq.push(['_trackPageview']);
+         (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+         })();
+      </script>   
    </head>
 
    <body>
-   
+
       <div id="wrapper">
       
          <div id="header">
@@ -100,10 +111,22 @@ if(!defined("_CT")) exit;
                <div class="block" style="margin-top: 24px;">
                   <div class="title nRound3 round3" style="border: 1px solid #fff;">About</div>
                   <div class="content">
-                     <b>Codetrunk</b> allows you to share pieces of code (also called snippet) with your friends, irc, or co-workers...<a href="<?php echo ROOT?>/about"><b>Click here for more</b></a>.
-                     <div style="margin-top: 8px;">
-                        <a href="http://tweetmeme.com/domain/codetrunk.com"><img src="http://api.tweetmeme.com/domaincount.gif?domain=codetrunk.com&amp;bgcolor=90a9c8" alt="TweetMeme Chicklet" /></a>
-                     </div>                     
+                     <b>Codetrunk</b> allows you to share pieces of code (also called snippet) with your friends, irc, or co-workers...<a href="<?php echo ROOT?>/about"><b>Click here for more</b></a>.                
+                  </div>
+               </div>
+               
+               <div class="block" style="margin-top: 24px;">
+                  <div class="title nRound3 round3" style="border: 1px solid #fff;">Subdomains</div>
+                  <div class="content">
+                     <ul style="margin-left: 14px;">
+                        <li style="padding: 0 0 4px;">Getting a subdomain is easy. Just type it and it will be created for you automatically!</li>
+                        <li style="padding: 4px 0 4px;">If a subdomain matches the supported languages, that language will be preselected for you.</li>
+                     </ul><br />
+                     <b>Exmaples:</b>
+                     <ul style="margin: 8px 0 0 14px;">
+                        <li style="padding: 0 0 4px;"><i><b><a href="http://nirazuelos.codetrunk.com/">http://nirazuelos.codetrunk.com/</a></b></i></li>
+                        <li style="padding: 4px 0 4px;"><i><b><a href="http://php.codetrunk.com/">http://php.codetrunk.com/</a></b></i></li>
+                     </ul>
                   </div>
                </div>
             </div>
@@ -123,18 +146,6 @@ if(!defined("_CT")) exit;
             <div class="clearfix">&nbsp;</div>
          </div>
       </div>
-      
-      <script type="text/javascript">
-         var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-         document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-      </script>
-      <script type="text/javascript">
-         try {
-            var pageTracker = _gat._getTracker("UA-1190348-3");
-            pageTracker._setDomainName(".codetrunk.com");
-            pageTracker._trackPageview();
-         } catch(err) {}
-      </script>
-
+      <?php $this->processScripts() ?>
    </body>
 </html>

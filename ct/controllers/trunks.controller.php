@@ -26,7 +26,7 @@
  * @filesource trunks.controller.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.05 Alpha Release to Public
+ * @version 2009 1.06 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -222,7 +222,7 @@ class trunksController extends Controller
             header("Location: ".$this->getTrunkUrl($ctKey));
          }
       } else Codetrunk::getInstance()->Router->followRoute(null, false);
-      echo '<script type="text/javascript">window.location.hash="newComment";</script>';
+      Codetrunk::getInstance()->wRenderer->appendScript('<script type="text/javascript">window.location.hash="newComment";</script>');
       return true;
    }
    
@@ -247,8 +247,12 @@ class trunksController extends Controller
          }
          if(!strlen(Codetrunk::getInstance()->Domain)) 
             Codetrunk::getInstance()->wRenderer->setTitleTrunk(Codetrunk::getInstance()->Syntax->getLanguage($trunkData['Syntax'])); 
-         Codetrunk::getInstance()->getView("Trunks")->initializeSyntaxHighlighter();
-         Codetrunk::getInstance()->wRenderer->appendContentHook(array(Codetrunk::getInstance()->getView("Trunks"), "renderTrunk"), array($trunkData, $pData, $ctName, $ctComment));
+            Codetrunk::getInstance()->wRenderer->appendScript('<script type="text/javascript" src="'.ROOT.'/syntaxhighlighter/src/shCore.js"></script>');
+            Codetrunk::getInstance()->wRenderer->appendScript('<script type="text/javascript">
+               SyntaxHighlighter.config.clipboardSwf = \''.ROOT.'/syntaxhighlighter/scripts/clipboard.swf\';
+               SyntaxHighlighter.all();
+               </script>');
+            Codetrunk::getInstance()->wRenderer->appendContentHook(array(Codetrunk::getInstance()->getView("Trunks"), "renderTrunk"), array($trunkData, $pData, $ctName, $ctComment));
       } else {
          Codetrunk::getInstance()->wRenderer->prettyError("The requested trunk was not found. It may have been deleted or has expired.", "margin-bottom: 12px;");
          Codetrunk::getInstance()->Router->followRoute(null, false);

@@ -26,7 +26,7 @@
  * @filesource file.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.05 Alpha Release to Public
+ * @version 2009 1.06 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -250,18 +250,16 @@ class File
     * 
     * File::addComment()
     * @param string $trunkKey Trunk Key
-    * @param string @Domain Domain
     * @param string $Comment Comment
     * @param string $Name Name
     */
-   function addComment($trunkKey, $Domain, $Comment, $Name) {
+   function addComment($trunkKey, $Comment, $Name) {
       $commentFile = $this->getTrunkPath($trunkKey).".c";
       $commentOpen = fopen($commentFile, "a+");
       if($commentOpen) {
          $updateComment['Content']    = $Comment;
          $updateComment['Name']       = $Name;
          $updateComment['Time']       = time();
-         $updateComment['Domain']     = $Domain;
          $updateComment['timeString'] = $this->getTimeString(time());
          if(flock($commentOpen, LOCK_EX)) {
             $commentData = false;
@@ -284,7 +282,7 @@ class File
     * @param string @Domain Domain
     * @return array|bool
     */
-   function getComments($trunkKey, $Domain) {
+   function getComments($trunkKey) {
       $commentsFile = $this->getTrunkPath($trunkKey).".c";
       if(file_exists($commentsFile)) {
          $commentOpen = fopen($commentsFile, "r");
@@ -294,8 +292,7 @@ class File
             if(strlen($commentsData)) $newComments = unserialize($commentsData); else trigger_error("Invalid trunk comments at '{$commentsFile}' !!!", E_ERROR);
             fclose($commentOpen);   
          } else trigger_error("Could not open trunk at '{$commentsFile}' !!!", E_ERROR);
-         if($newComments['Domain'] != $Domain) return false;
-         else return $newComments;
+         return $newComments;
       } else return false;
    }
 }

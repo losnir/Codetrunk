@@ -26,7 +26,7 @@
  * @filesource syntaxhighlighter.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.05 Alpha Release to Public
+ * @version 2009 1.06 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -51,32 +51,31 @@ class SyntaxHighlighter
    function __construct($defLanguage) {
       $this->defLanguage = $defLanguage;
       $this->allowedLanguages = array(
-         "as3"    => array("ActionScript3", "shBrushAS3.js "),
-         "bash"   => array("Bash / Shell", "shBrushBash.js "),
+         "as3"    => array("ActionScript3", "shBrushAS3.js"),
+         "bash"   => array("Bash / Shell", "shBrushBash.js"),
          "coldf"  => array("ColdFusion", "shBrushColdFusion.js"),
-         "cpp"    => array("C++ / C", "shBrushCpp.js "),
-         "csharp" => array("C#", "shBrushCSharp.js "),
-         "css"    => array("CSS", "shBrushCss.js "),
-         "delphi" => array("Delphi / Pascal", "shBrushDelphi.js "),
-         "diff"   => array("Diff / Patch", "shBrushDiff.js "),
+         "cpp"    => array("C++ / C", "shBrushCpp.js"),
+         "csharp" => array("C#", "shBrushCSharp.js"),
+         "css"    => array("CSS", "shBrushCss.js"),
+         "delphi" => array("Delphi / Pascal", "shBrushDelphi.js"),
+         "diff"   => array("Diff / Patch", "shBrushDiff.js"),
          "erlang" => array("Erlang", "shBrushErlang.js"),
-         "groovy" => array("Groovy", "shBrushGroovy.js "),
-         "java"   => array("Java", "shBrushJava.js "),
-         "jfx"    => array("JavaFX", "shBrushJavaFX.js "),
-         "js"     => array("JavaScript", "shBrushJScript.js "),
+         "groovy" => array("Groovy", "shBrushGroovy.js"),
+         "java"   => array("Java", "shBrushJava.js"),
+         "jfx"    => array("JavaFX", "shBrushJavaFX.js"),
+         "js"     => array("JavaScript", "shBrushJScript.js"),
          "lua"    => array("Lua", "shBrushLua.js"),
-         "perl"   => array("Perl", "shBrushPerl.js "),
-         "php"    => array("PHP", "shBrushPhp.js "),
-         "html"   => array("HTML", "shBrushXml.js "),
+         "perl"   => array("Perl", "shBrushPerl.js"),
+         "php"    => array("PHP", "shBrushPhp.js"),
+         "html"   => array("HTML", "shBrushXml.js"),
          "text"   => array("Plain / Text", "shBrushPlain.js"),
-         "ps"     => array("PowerShell", "shBrushPowerShell.js "),
-         "py"     => array("Python", "shBrushPython.js "),
-         "ruby"   => array("Ruby on Rails", "shBrushRuby.js "),
-         "scala"  => array("Scala", "shBrushScala.js "),
-         "sql"    => array("SQL", "shBrushSql.js "),
-         "vb"     => array("Visual Basic / VB.net", "shBrushVb.js "),
-         "xml"    => array("XML", "shBrushXml.js "),
-
+         "ps"     => array("PowerShell", "shBrushPowerShell.js"),
+         "py"     => array("Python", "shBrushPython.js"),
+         "ruby"   => array("Ruby on Rails", "shBrushRuby.js"),
+         "scala"  => array("Scala", "shBrushScala.js"),
+         "sql"    => array("SQL", "shBrushSql.js"),
+         "vb"     => array("Visual Basic / VB.net", "shBrushVb.js"),
+         "xml"    => array("XML", "shBrushXml.js")
       );
       $this->popularLanguages = array("js", "html", "xml", "php", "cpp", "csharp", "py", "java");
       foreach($this->allowedLanguages AS $langKey => $langValue)

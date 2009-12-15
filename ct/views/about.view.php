@@ -26,7 +26,7 @@
  * @filesource about.view.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.05 Alpha Release to Public
+ * @version 2009 1.06 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -53,8 +53,8 @@ class aboutView extends View
                <div style="font: 15px Arial;"><div class="clearfix">&nbsp;</div>
                   <p style="border-bottom: 1px solid #90a9c8; color: #90a9c8; margin-bottom: 6px; padding-bottom: 2px;">About Codetrunk</p>
                      <b>Codetrunk.com</b> is a platform for sharing code snippets with friends, co-workers, pepole on irc channels and, in fact, with everyone on the Internet.
-                     Codetrunk is my little project for making a better <a target="_blank" href="http://www.pastebin.com/">pastebin</a>, with the abbility of commenting on trunks (or bins), revising and so on.
-                     The main idea was to implement a better syntax highlighter (<a target="_blank" href="http://alexgorbatchev.com/wiki/SyntaxHighlighter">SyntaxHighlighter</a>) with a prettier (but heavier) interface,
+                     Codetrunk is my little project for making a better <a target="_blank" rel="nofollow" href="http://www.pastebin.com/">pastebin</a>, with the abbility of commenting on trunks (or bins), revising and so on.
+                     The main idea was to implement a better syntax highlighter (<a target="_blank" rel="nofollow" href="http://alexgorbatchev.com/wiki/SyntaxHighlighter">SyntaxHighlighter</a>) with a prettier (but heavier) interface,
                      something which pastebin was lacking. Codetrunk is also an effort of mine to improve my php coding skills, therefore, the software behind Codetrunk implemnts the following:
                      <ul style="margin: 16px 0 16px 16px;">
                         <li><a target="_blank" href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller"><b>Model View Controller</b></a> Design Pattern</li>
@@ -67,8 +67,8 @@ class aboutView extends View
                      I also have an experience with the following languages / technologies:
                      <ul style="margin: 16px 0 16px 16px;">
                         <li><b>Microsoft Visual C#.NET</b> - Only a few projects so far, one of them is <i>Windows 7 Customizer</i> that I'll publish when I'll have some spare time.</li>
-                        <li><b>Python</b> - The biggest application I've done so far in Python is a plugin for EventScripts (CS:S) called <a target="_blank" href="http://addons.eventscripts.com/addons/view/pickups"><i>Pickups</i></a>.</li>
-                        <li><b>Firefox Extensions</b> - The single and only extension I've done is a simple extension developed especially for <a target="_blank" href="http://www.gilberger.com/">Gil Berger</a>, called <a target="_blank" href="http://get.dotelp.com/">Dotelp</a> (Including a C# BHO for IE)</li>
+                        <li><b>Python</b> - The biggest application I've done so far in Python is a plugin for EventScripts (CS:S) called <a target="_blank" rel="nofollow" href="http://addons.eventscripts.com/addons/view/pickups"><i>Pickups</i></a>.</li>
+                        <li><b>Firefox Extensions</b> - The single and only extension I've done is a simple extension developed especially for <a target="_blank" href="http://www.gilberger.com/">Gil Berger</a>, called <a target="_blank" rel="nofollow" href="http://get.dotelp.com/">Dotelp</a> (Including a C# BHO for IE)</li>
                      </ul>
                      <div style="margin-top: 24px;">- Nir Azuelos</div>
                   <p style="border-bottom: 1px solid #90a9c8; color: #90a9c8; margin: 24px 0 10px 0; padding-bottom: 2px;">Contact Me</p>
@@ -84,7 +84,7 @@ class aboutView extends View
                      is offered to you <b>WITHOUT ANY WARRANTY</b> and therefore I'm not required to provide any support for it. However, I may still offer help, within the reasonable range ;)
                      <ul style="margin: 16px 0 16px 16px;">
                         <li>You can obtain the source code <a href="http://code.google.com/p/codetrunk/">here</a>.</li>
-                        <li>A <a target="_blank" href="<?php echo ROOT?>/doc">documentation</a> generated with phpDoc is also available.</li>
+                        <li>A <a target="_blank" rel="nofollow" href="<?php echo ROOT?>/doc">documentation</a> generated with phpDoc is also available.</li>
                      </ul>
                      Additionally, the Codetrunk software has some parts and concepts based on the original pastebin source code, so big thanks goes to <b>Paul Dixon</b>, the creator of pastebin. 
                      Also, I'd like to thank <b>Kfir Gollan</b> for allowing me to host Codetrunk on his Private Server!

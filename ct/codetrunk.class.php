@@ -26,7 +26,7 @@
  * @filesource codetrunk.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.05 Alpha Release to Public
+ * @version 2009 1.06 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -249,10 +249,10 @@ final class Codetrunk
     * @public
     */
    public function nl2br_pre($tString) {
-      return preg_replace_callback('!<pre(.*?)>(.*?)</pre>!is', "clean", nl2br($tString));
-      function clean() {
-         return "<pre ".stripslashes(trim($m[1])).">".stripslashes(str_replace("<br />", null, $m[2]))."</pre>";
-      }
+      return preg_replace_callback('!<pre(.*?)>(.*?)</pre>!is', array($this, "nl2br_pre_clean"), nl2br($tString));
+   }
+   private function nl2br_pre_clean($m) {
+      return "<pre ".stripslashes(trim($m[1])).">".stripslashes(str_replace("<br />", null, $m[2]))."</pre>";
    }
    
    /**
