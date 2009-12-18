@@ -1,5 +1,13 @@
 ============================== Codetrunk Changes History ==============================
 
+* Version 1.08 Alpha (18/12/2009) svn r12
+============================================
+ - 9th commit to SVN.
+ - Alpha version.
+ - May be used by the public.
+ - Changes:
+   + Fixed a bug in the last release which would cause trunks with comments to generate an error.
+
 * Version 1.07 Alpha (18/12/2009) svn r11
 ============================================
  - 8th commit to SVN.

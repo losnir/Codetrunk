@@ -26,7 +26,7 @@
  * @filesource file.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.07 Alpha Release to Public
+ * @version 2009 1.08 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -292,7 +292,7 @@ class File
             while(!feof($commentOpen)) { $commentsData .= fread($commentOpen, 4096); }
             if(strlen($commentsData)) $newComments = unserialize($commentsData); else trigger_error("Invalid trunk comments at '{$commentsFile}' !!!", E_ERROR);
             fclose($commentOpen); 
-            touch($commentFile, filemtime($this->getTrunkPath($trunkKey)));  
+            touch($commentsFile, filemtime($this->getTrunkPath($trunkKey)));  
          } else trigger_error("Could not open trunk at '{$commentsFile}' !!!", E_ERROR);
          return $newComments;
       } else return false;
