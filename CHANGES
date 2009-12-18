@@ -1,5 +1,13 @@
 ============================== Codetrunk Changes History ==============================
 
+* Version 1.07 Alpha (18/12/2009) svn r11
+============================================
+ - 8th commit to SVN.
+ - Alpha version.
+ - May be used by the public.
+ - Changes:
+   + Adding / Removing comments now sets the comment file access/modification time to the trunk time so it will be deleted all together.
+
 * Version 1.06 Alpha (15/12/2009) svn r10
 ============================================
  - 7th commit to SVN.
