@@ -26,7 +26,7 @@
  * @filesource about.view.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.08 Alpha Release to Public
+ * @version 2010 1.09 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -55,7 +55,7 @@ class aboutView extends View
                      <b>Codetrunk.com</b> is a platform for sharing code snippets with friends, co-workers, pepole on irc channels and, in fact, with everyone on the Internet.
                      Codetrunk is my little project for making a better <a target="_blank" rel="nofollow" href="http://www.pastebin.com/">pastebin</a>, with the abbility of commenting on trunks (or bins), revising and so on.
                      The main idea was to implement a better syntax highlighter (<a target="_blank" rel="nofollow" href="http://alexgorbatchev.com/wiki/SyntaxHighlighter">SyntaxHighlighter</a>) with a prettier (but heavier) interface,
-                     something which pastebin was lacking. Codetrunk is also an effort of mine to improve my php coding skills, therefore, the software behind Codetrunk implemnts the following:
+                     something which pastebin was lacking. Codetrunk is also an effort of mine to improve my php coding skills, therefore, the software behind Codetrunk implements the following:
                      <ul style="margin: 16px 0 16px 16px;">
                         <li><a target="_blank" href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller"><b>Model View Controller</b></a> Design Pattern</li>
                         <li><a target="_blank" href="http://en.wikipedia.org/wiki/Singleton_pattern"><b>Singleton</b></a> Design Pattern</li>

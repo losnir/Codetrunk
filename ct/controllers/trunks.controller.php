@@ -26,7 +26,7 @@
  * @filesource trunks.controller.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.08 Alpha Release to Public
+ * @version 2010 1.09 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -77,6 +77,9 @@ class trunksController extends Controller
          } elseif(isset($ctParent) && $ctParent['Code'] == $ctTrunk) {
             Codetrunk::getInstance()->Router->followRoute(null, false, $errorParams);
             Codetrunk::getInstance()->wRenderer->prettyError("The two codes were identical.", "margin-top: 12px;");
+         } elseif($this->isSpam($ctTrunk)) {
+            Codetrunk::getInstance()->Router->followRoute(null, false, $errorParams);
+            Codetrunk::getInstance()->wRenderer->prettyError("Sorry but this looks like spam.", "margin-top: 12px;");
          } else {
             $ctToken = 0;
             if(isset($_POST['ctRemember'])) {
@@ -456,6 +459,56 @@ class trunksController extends Controller
    function getExpiry($ctExpiry) {
       if(preg_match("/^[dmf]$/", $ctExpiry)) return $ctExpiry;
       else return Codetrunk::getInstance()->Config['Codetrunk']['expiry'];
+   }
+   
+   /**
+    * Validates a trunk path and returns trunk key
+    * 
+    * trunksController::isValidTrunkPath()
+    * @param string $trunkPath Trunk Path
+    * @return string
+    */
+   function isValidTrunkPath($trunkPath) {
+      return $this->getTrunkKey(basename($trunkPath));
+   }
+   
+   /**
+    * Returns true if code is spam
+    * 
+    * trunksController::isSpam()
+    * @return bool
+    */
+   function isSpam($trunkCode) {
+      $matchesLen = 0; $allMatches = array(); $numOfLinks = 0;
+      $matchingExpressions = array("(<a\b[^>]*>(.*?)</a>)", "(\[url\b[^\]]*\](.*?)\[/url\])", "(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)");
+      foreach($matchingExpressions as $currExpression) {
+         $numOfLinks += preg_match_all($currExpression, $trunkCode, $allMatches);
+         foreach($allMatches[0] as $value) {
+            $matchesLen += strlen($value);
+            $trunkCode = str_replace($value, "", $trunkCode);
+         }
+      }
+      $textToLinksRatio = ($matchesLen / strlen($trunkCode + 1));
+      if($numOfLinks >= Codetrunk::getInstance()->Config['SpamFilter']['minLinks'] && $textToLinksRatio >= Codetrunk::getInstance()->Config['SpamFilter']['linkToTextRatio']) return true;
+      return false;
+   }
+   
+   /**
+    * Deletes all spam trunks
+    * 
+    * trunksController::deleteSpam()
+    * @return int
+    */
+   function deleteSpam() {
+      $numOfDeleted = 0;
+      foreach(Codetrunk::getInstance()->File->getTrunksList() as $trunkKey) {
+         $trunkData = Codetrunk::getInstance()->File->getTrunk($trunkKey, false);
+         if($this->isSpam($trunkData['Code'])) {
+            Codetrunk::getInstance()->File->deleteTrunk($trunkKey);
+            $numOfDeleted++;
+         }
+      }
+      return $numOfDeleted;
    }
 }
 ?>

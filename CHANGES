@@ -1,5 +1,15 @@
 ============================== Codetrunk Changes History ==============================
 
+* Version 1.09 Alpha (17/04/2010) svn r13
+============================================
+ - 10th commit to SVN.
+ - Alpha version.
+ - May be used by the public.
+ - Changes:
+   + Fixed a couple of bugs
+   + Added spam filter mechanism
+   + Added ip blacklist mechanism
+
 * Version 1.08 Alpha (18/12/2009) svn r12
 ============================================
  - 9th commit to SVN.

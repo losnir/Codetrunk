@@ -26,7 +26,7 @@
  * @filesource file.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.08 Alpha Release to Public
+ * @version 2010 1.09 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -177,6 +177,7 @@ class File
       $updateMru['Time']       = $Time;
       $updateMru['postFormat'] = $timeString;
       $this->updateMru($Domain, $updateMru);
+      //Codetrunk::getInstance()->dumpServerData("../ctData/dump.trunk.log", $trunkKey);
       return $trunkKey;
     }
 
@@ -199,7 +200,7 @@ class File
             fclose($trunkOpen);   
          } else trigger_error("Could not open trunk at '{$trunkFile}' !!!", E_ERROR);
          $newTrunk['Url'] = Codetrunk::getInstance()->getController("Trunks")->getTrunkUrl($newTrunk['Key']);
-         if($newTrunk['Domain'] != $Domain) return false;
+         if($Domain !== false && $newTrunk['Domain'] != $Domain) return false;
          elseif((time() > $newTrunk['expireTime']) && $newTrunk['expireTime'] != 0) return false;
          else return $newTrunk;
       } else return false;
@@ -236,10 +237,10 @@ class File
     * @param string @Domain Domain
     * @return bool
     */
-   function deleteTrunk($trunkKey, $Domain) {
-      $trunkData = $this->getTrunk($trunkKey, $Domain);
+   function deleteTrunk($trunkKey) {
+      $trunkData = $this->getTrunk($trunkKey, false);
       if($trunkData) {
-         $this->updateMru($Domain, $trunkKey);
+         $this->updateMru($trunkData['Domain'], $trunkKey);
          unlink($this->getTrunkPath($trunkKey));
        }
        return true;
@@ -280,7 +281,6 @@ class File
     * 
     * File::getComments()
     * @param string $trunkKey Trunk Key
-    * @param string @Domain Domain
     * @return array|bool
     */
    function getComments($trunkKey) {
@@ -296,6 +296,46 @@ class File
          } else trigger_error("Could not open trunk at '{$commentsFile}' !!!", E_ERROR);
          return $newComments;
       } else return false;
+   }
+   
+   /**
+    * Fetches all files in a directory
+    * 
+    * File::getDirecotryFiles()
+    * @param string $dirPath Directory
+    * @param string $openRecursive Open Recursive Directories
+    * @return array|bool
+    */
+   function getDirecotryFiles($dirPath, $openRecursive) {
+      if(is_dir($dirPath)) {
+         if($directoryHandle = opendir($dirPath)) {
+            $directoryFiles = array();
+            while(false !== ($fileName = readdir($directoryHandle))) {
+               if ($fileName != "." && $fileName != "..") {
+                  $filePath = $dirPath.DIRECTORY_SEPARATOR.$fileName;
+                  if(is_dir($filePath) && $openRecursive) $directoryFiles = array_merge($directoryFiles, $this->getDirecotryFiles($filePath, true));
+                  else $directoryFiles[] = $filePath;
+               }
+            }
+            closedir($directoryHandle);
+            return $directoryFiles;
+         } else return false;
+      } else return false;
+   }
+
+   /**
+    * Fetchs all trunks
+    * 
+    * File::getTrunksList()
+    * @return string
+    */
+   function getTrunksList() {
+      $storageList = array();
+      foreach($this->getDirecotryFiles($this->storageDir, true) as $trunkPath) {
+         $trunkKey = Codetrunk::getInstance()->getController("Trunks")->isValidTrunkPath($trunkPath);
+         if($trunkKey) $storageList[] = $trunkKey;
+      }
+      return $storageList;
    }
 }
 ?>

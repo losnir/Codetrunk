@@ -26,7 +26,7 @@
  * @filesource default.style.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.08 Alpha Release to Public
+ * @version 2010 1.09 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -138,7 +138,7 @@ if(!defined("_CT")) exit;
          
          <div id="footer" class="round6">
             <span class="left"><a href="http://www.losnir.com/" title="Site by LosNir" target="_blank"><img src="<?php echo ROOT?>/images/losnir16px.gif" style="float: left; margin-right: 6px;" alt="LosNir" /></a>
-               © 2009 Codetrunk, by Nir Azuelos.</span>
+               © 2010 Codetrunk, by Nir Azuelos.</span>
             <span class="right">
                <a style="margin-right: 24px;" href="<?php echo ROOT?>/about">About</a>
                <a style="margin-right: 24px;" href="mailto:nirazuelos@gmail.com"><b>Contact</b></a>

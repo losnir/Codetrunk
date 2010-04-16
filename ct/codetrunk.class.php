@@ -26,7 +26,7 @@
  * @filesource codetrunk.class.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.08 Alpha Release to Public
+ * @version 2010 1.09 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -80,6 +80,9 @@ final class Codetrunk
 
       /* Load default Configuration */
       $this->Config = $this->loadConfig("default", true);
+
+      /* Blacklists Out */
+      if(in_array($_SERVER['REMOTE_ADDR'], $this->getBlacklists())) die("<h1>Access Denied</h1> Blacklisted for spamming");
 
       /* Development Mode */
       if($this->Config['Codetrunk']['dev']) {
@@ -272,6 +275,29 @@ final class Codetrunk
       if($this->Config['Logging']['displayErrors']) return false;
       if($this->Config['Logging']['errorPage']) { $this->wRenderer->renderWebsite($this->Config['Logging']['errorStyle']); exit; }
       return false;
+   }
+   
+   /**
+    * $_SERVER Dump for Debugging purpose
+    *
+    * Codetrunk::dumpServerData()
+    * @param string $filePath
+    * @param array $newData
+    * @return bool
+    * @public
+   */
+   public function dumpServerData($filePath, $trunkKey) {
+      return error_log(sprintf("[%s] %s --- %s", date("d/m/Y H:i:s"), $trunkKey, var_export($_SERVER, true)).PHP_EOL.PHP_EOL, 3, _CP.DS.$filePath);
+   }
+   
+   /**
+    * Fetch array of blacklisted ips
+    * 
+    * Codetrunk::getBlacklists()
+    * @return array
+    */
+   function getBlacklists() {
+      return explode("\n", file_get_contents($this->Config['Blacklists']['file']));
    }
 }
 ?>

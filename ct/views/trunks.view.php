@@ -26,7 +26,7 @@
  * @filesource trunks.view.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.08 Alpha Release to Public
+ * @version 2010 1.09 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO General Public License v3
  */
 
@@ -147,7 +147,7 @@ class trunksView extends View
          <?php if(isset($_COOKIE['ctToken']) && $trunkData['Token'] == $_COOKIE['ctToken']) { ?> | <a class="link1" onclick="return confirm('Are you sure you want to delete this trunk?\r\nThis action cannot be undone!')" href="<?php echo $trunkData['Url']?>/delete">delete</a><?php } ?> |
          <a class="link1" href="<?php echo $trunkData['Url']?>/download">download</a> |
          <a class="link1" href="<?php echo $trunkData['Url']?>/correction">submit a correction</a>
-         <?php if($trunkData['followUps']) { ?> | <a class="link1" href="<?php echo $trunkData['Url']?>/revisions"><?php echo count($trunkData['followUps'])?> revisions</a><?php } ?>
+         <?php if($trunkData['followUps']) { ?> | <a class="link1" style="color: #610c0c;" href="<?php echo $trunkData['Url']?>/revisions"><?php echo count($trunkData['followUps'])?> revisions</a><?php } ?>
        </div>
      </div>
      <div class="title nRound3 round3 left" style="margin-bottom: 4px; padding: 4px;"><a class="link" href="<?php echo $trunkData['Url']?>/correction"><img src="<?php echo ROOT?>/images/icons/script_lightning.png" width="16" height="16" alt="" style="margin-right: 8px;" class="icon pngfix" />
@@ -156,7 +156,7 @@ class trunksView extends View
      <div class="clearfix">&nbsp;</div>
             
      <div class="nRound3 round3" style="border: 1px solid #90a9c8;  background: #ffffff;">
-       <pre class="brush: <?php echo $trunkData['Syntax']?>"><?php echo htmlspecialchars($trunkData['Code']);?></pre>
+       <pre class="brush: <?php echo $trunkData['Syntax']?>; wrap-lines: true"><?php echo htmlspecialchars($trunkData['Code']);?></pre>
      </div>
             
      <a name="Comments"></a>

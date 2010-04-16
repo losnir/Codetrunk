@@ -26,7 +26,7 @@
  * @filesource codetrunk.init.php
  * @author Nir Azuelos <nirazuelos@gmail.com>
  * @copyright Copyright (c) 2009, Nir Azuelos (a.k.a. LosNir); All rights reserved;
- * @version 2009 1.08 Alpha Release to Public
+ * @version 2010 1.09 Alpha Release to Public
  * @license http://opensource.org/licenses/agpl-v3.html GNU AFFERO GENERAL PUBLIC LICENSE v3
  */
 
@@ -39,6 +39,7 @@ $Codetrunk->addController("Default", "default");
 $Codetrunk->addController("Trunks", "trunks");
 $Codetrunk->addController("About", "about");
 $Codetrunk->addController("Captcha", "captcha");
+$Codetrunk->addController("Manage", "manage");
 
 /**
  * Router Configuration
@@ -56,6 +57,10 @@ $Codetrunk->Router->addRule("(?:\/*)digTrunk(?:\/*)", "Trunks", "digTrunk"); /* 
 $Codetrunk->Router->addRule("(?:\/*)getCaptcha(?:\/*)", "Captcha", "showCaptcha"); /* Captcha */
 $Codetrunk->Router->addRule("(?:\/*)languages(?:\/*)", "Trunks", "showLanguages"); /* Languages */
 $Codetrunk->Router->addRule("(?:\/*)about(?:\/*)", "About", "showAbout"); /* About page */
+$Codetrunk->Router->addRule("(?:\/*)manage(?:\/*)", "Manage", "initManage"); /* Manage page */
+$Codetrunk->Router->addRule("(?:\/*)manage\/login(?:\/*)", "Manage", "performLogin"); /* Manage page */
+$Codetrunk->Router->addRule("(?:\/*)manage\/deleteSpam(?:\/*)", "Manage", "deleteSpam"); /* Manage page */
+$Codetrunk->Router->addRule("(?:\/*)manage\/logout(?:\/*)", "Manage", "Logout"); /* Manage page */
 
 /**
  * Render Page
